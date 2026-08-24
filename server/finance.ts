@@ -103,6 +103,8 @@ export async function createApprovedCharge(input: { code: string; name: string; 
   return (await db.select().from(approvedSchoolCharges).where(eq(approvedSchoolCharges.id, Number(result[0].insertId))).limit(1))[0];
 }
 
+export async function approveSchoolCharge(input: { chargeId: number; approvedByUserId: number }) { const db = await getDb(); if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database is not available." }); const current = (await db.select().from(approvedSchoolCharges).where(eq(approvedSchoolCharges.id, input.chargeId)).limit(1))[0]; if (!current) throw new TRPCError({ code: "NOT_FOUND", message: "School charge not found." }); await db.update(approvedSchoolCharges).set({ status: "APPROVED", approvedByUserId: input.approvedByUserId, approvedAt: new Date() }).where(eq(approvedSchoolCharges.id, input.chargeId)); return (await db.select().from(approvedSchoolCharges).where(eq(approvedSchoolCharges.id, input.chargeId)).limit(1))[0]; }
+
 export async function savePaynowSettings(input: { integrationId: string; integrationKey: string; returnUrl: string; resultUrl: string; isActive: boolean; updatedByUserId: number }) {
   const db = await getDb(); if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database is not available." });
   const encrypted = encryptSecret(input.integrationKey); const current = await db.select().from(paynowSettings).limit(1);
