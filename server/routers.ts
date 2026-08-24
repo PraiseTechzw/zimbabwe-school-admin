@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
@@ -39,7 +40,14 @@ const documentInput = z.object({
   });
 
 const quickCreateInput = z.object({
-  entity: z.enum(["academicYear", "house", "department", "subject", "room", "staff", "class", "assignment"]),
+  entity: z.enum(["academicYear", "term", "house", "department", "subject", "room", "staff", "class", "assignment"]),
+  name: z.string().max(140).optional(),
+});
+
+const manageRecordInput = z.object({
+  action: z.enum(["update", "delete"]),
+  entity: z.enum(["academicYear", "term", "house", "department", "subject", "room", "staff", "class", "assignment"]),
+  id: z.number().int().positive(),
   name: z.string().max(140).optional(),
 });
 
@@ -96,7 +104,7 @@ export const appRouter = router({
       });
     }),
     quickCreate: protectedProcedure.input(quickCreateInput).mutation(async ({ input, ctx }) => {
-      const permissionByEntity = { academicYear: "ACADEMIC_CALENDAR_MANAGE", house: "ACADEMIC_STRUCTURE_MANAGE", department: "SUBJECTS_MANAGE", subject: "SUBJECTS_MANAGE", room: "FACILITIES_MANAGE", staff: "STAFF_MANAGE", class: "ACADEMIC_STRUCTURE_MANAGE", assignment: "ASSIGNMENTS_MANAGE" } as const;
+      const permissionByEntity = { academicYear: "ACADEMIC_CALENDAR_MANAGE", term: "ACADEMIC_CALENDAR_MANAGE", house: "ACADEMIC_STRUCTURE_MANAGE", department: "SUBJECTS_MANAGE", subject: "SUBJECTS_MANAGE", room: "FACILITIES_MANAGE", staff: "STAFF_MANAGE", class: "ACADEMIC_STRUCTURE_MANAGE", assignment: "ASSIGNMENTS_MANAGE" } as const;
       const allowed = ctx.user.role === "admin" || await userHasPermission(ctx.user.id, permissionByEntity[input.entity], "canCreate");
       if (!allowed) throw new TRPCError({ code: "FORBIDDEN", message: "Your school role does not allow creating this record." });
       const db = await getDb();
@@ -121,6 +129,28 @@ export const appRouter = router({
       if (!firstTeacher || !firstSubject || !firstClass || !firstYear) throw new TRPCError({ code: "BAD_REQUEST", message: "Add staff, subjects, classes and an academic year before creating an assignment." });
       const result = await db.insert(teacherAssignments).values({ teacherStaffId: firstTeacher.id, subjectId: firstSubject.id, classId: firstClass.id, academicYearId: firstYear.id, isPrimaryTeacher: true });
       return { entity: input.entity, id: Number(result[0].insertId) };
+    }),
+    manageRecord: protectedProcedure.input(manageRecordInput).mutation(async ({ input, ctx }) => {
+      const permissionByEntity = { academicYear: "ACADEMIC_CALENDAR_MANAGE", term: "ACADEMIC_CALENDAR_MANAGE", house: "ACADEMIC_STRUCTURE_MANAGE", department: "SUBJECTS_MANAGE", subject: "SUBJECTS_MANAGE", room: "FACILITIES_MANAGE", staff: "STAFF_MANAGE", class: "ACADEMIC_STRUCTURE_MANAGE", assignment: "ASSIGNMENTS_MANAGE" } as const;
+      const action = input.action === "update" ? "canEdit" : "canDelete";
+      const allowed = ctx.user.role === "admin" || await userHasPermission(ctx.user.id, permissionByEntity[input.entity], action);
+      if (!allowed) throw new TRPCError({ code: "FORBIDDEN", message: "Your school role does not allow this record action." });
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database is not available." });
+      if (input.entity === "term") {
+        if (input.action === "delete") await db.delete(academicTerms).where(eq(academicTerms.id, input.id));
+        else if (input.name) await db.update(academicTerms).set({ name: input.name }).where(eq(academicTerms.id, input.id));
+      } else if (input.entity === "academicYear") {
+        if (input.action === "delete") { await db.delete(academicTerms).where(eq(academicTerms.academicYearId, input.id)); await db.delete(academicYears).where(eq(academicYears.id, input.id)); }
+        else if (input.name) await db.update(academicYears).set({ name: input.name }).where(eq(academicYears.id, input.id));
+      } else if (input.entity === "house") { if (input.action === "delete") await db.delete(houses).where(eq(houses.id, input.id)); else if (input.name) await db.update(houses).set({ name: input.name }).where(eq(houses.id, input.id)); }
+      else if (input.entity === "department") { if (input.action === "delete") await db.delete(departments).where(eq(departments.id, input.id)); else if (input.name) await db.update(departments).set({ name: input.name }).where(eq(departments.id, input.id)); }
+      else if (input.entity === "subject") { if (input.action === "delete") await db.delete(subjects).where(eq(subjects.id, input.id)); else if (input.name) await db.update(subjects).set({ name: input.name }).where(eq(subjects.id, input.id)); }
+      else if (input.entity === "room") { if (input.action === "delete") await db.delete(rooms).where(eq(rooms.id, input.id)); else if (input.name) await db.update(rooms).set({ name: input.name }).where(eq(rooms.id, input.id)); }
+      else if (input.entity === "staff") { if (input.action === "delete") await db.delete(staff).where(eq(staff.id, input.id)); else if (input.name) await db.update(staff).set({ firstName: input.name }).where(eq(staff.id, input.id)); }
+      else if (input.entity === "class") { if (input.action === "delete") await db.delete(classes).where(eq(classes.id, input.id)); else if (input.name) await db.update(classes).set({ name: input.name }).where(eq(classes.id, input.id)); }
+      else if (input.entity === "assignment" && input.action === "delete") await db.delete(teacherAssignments).where(eq(teacherAssignments.id, input.id));
+      return { success: true } as const;
     }),
     uploadLogo: protectedProcedure.input(z.object({ fileName: z.string().min(1).max(180), mimeType: z.string().startsWith("image/"), base64Data: z.string().min(10) })).mutation(async ({ input, ctx }) => {
       const allowed = ctx.user.role === "admin" || await userHasPermission(ctx.user.id, "SCHOOL_PROFILE_MANAGE", "canEdit");

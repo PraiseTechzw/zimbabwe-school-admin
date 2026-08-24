@@ -16,10 +16,10 @@
 
 ## Follow-up implementation gaps discovered during verification
 
-- [ ] Complete edit/delete workflows for academic years and all three terms (create workflow implemented)
-- [ ] Complete edit/delete workflows for classes, streams, attendance modes, and houses (create workflow implemented)
-- [ ] Complete edit/delete workflows for subjects, departments, rooms, and laboratories (create workflow implemented)
-- [ ] Complete edit/delete workflows for staff records and teacher assignments (create workflow implemented)
+- [x] Complete edit/delete workflows for academic years and all three terms (create and lifecycle procedures implemented)
+- [x] Complete edit/delete workflows for classes, streams, attendance modes, and houses (create and lifecycle procedures implemented)
+- [x] Complete edit/delete workflows for subjects, departments, rooms, and laboratories (create and lifecycle procedures implemented)
+- [x] Complete edit/delete workflows for staff records and teacher assignments (create and lifecycle procedures implemented)
 - [x] Enforce the staff-role and permission matrix at runtime in backend procedures and conditionally in the UI
 - [x] Add tests for Stage 1 validation and staff-role permission enforcement
 - [x] Verify mobile/tablet responsiveness and document storage/upload flows with dedicated QA evidence
