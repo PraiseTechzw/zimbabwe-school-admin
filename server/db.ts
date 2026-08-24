@@ -1,4 +1,4 @@
-import { and, asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, gt, isNull, lte, or } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   academicTerms,
@@ -148,9 +148,10 @@ export async function userHasPermission(userId: number, permissionCode: string, 
   const rows = await db.select({ allowed: rolePermissions[action] })
     .from(staff)
     .innerJoin(staffRoleAssignments, eq(staffRoleAssignments.staffId, staff.id))
+    .innerJoin(staffRoles, eq(staffRoles.id, staffRoleAssignments.roleId))
     .innerJoin(rolePermissions, eq(rolePermissions.roleId, staffRoleAssignments.roleId))
     .innerJoin(permissions, eq(rolePermissions.permissionId, permissions.id))
-    .where(and(eq(staff.userId, userId), eq(permissions.code, permissionCode)))
+    .where(and(eq(staff.userId, userId), eq(staff.status, "ACTIVE"), eq(staffRoles.isActive, true), eq(permissions.code, permissionCode), lte(staffRoleAssignments.effectiveFrom, new Date()), or(isNull(staffRoleAssignments.effectiveTo), gt(staffRoleAssignments.effectiveTo, new Date()))))
     .limit(1);
   return Boolean(rows[0]?.allowed);
 }
@@ -162,7 +163,7 @@ export async function getRolePermission(roleCode: string, permissionCode: string
     .from(rolePermissions)
     .innerJoin(staffRoles, eq(rolePermissions.roleId, staffRoles.id))
     .innerJoin(permissions, eq(rolePermissions.permissionId, permissions.id))
-    .where(and(eq(staffRoles.code, roleCode), eq(permissions.code, permissionCode)))
+    .where(and(eq(staffRoles.code, roleCode), eq(staffRoles.isActive, true), eq(permissions.code, permissionCode)))
     .limit(1);
   return Boolean(rows[0]?.allowed);
 }

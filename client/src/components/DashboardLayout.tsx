@@ -21,22 +21,59 @@ import {
 } from "@/components/ui/sidebar";
 import { startLogin } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { BookOpenCheck, Building2, CalendarDays, ClipboardList, GraduationCap, LayoutDashboard, LogOut, PanelLeft, ShieldCheck, Users } from "lucide-react";
+import {
+  Banknote,
+  BookOpenCheck,
+  Building2,
+  CalendarDays,
+  ClipboardList,
+  GraduationCap,
+  HeartPulse,
+  History,
+  LayoutDashboard,
+  LogOut,
+  PanelLeft,
+  ShieldCheck,
+  Users,
+} from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
-import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
+import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
+import { trpc } from "@/lib/trpc";
 import { Button } from "./ui/button";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Foundation overview", path: "/" },
   { icon: Building2, label: "School profile", path: "/#school-profile" },
-  { icon: CalendarDays, label: "Academic calendar", path: "/#academic-calendar" },
-  { icon: GraduationCap, label: "Forms & classes", path: "/#academic-structure" },
+  {
+    icon: CalendarDays,
+    label: "Academic calendar",
+    path: "/#academic-calendar",
+  },
+  {
+    icon: GraduationCap,
+    label: "Forms & classes",
+    path: "/#academic-structure",
+  },
   { icon: BookOpenCheck, label: "Subjects & departments", path: "/#subjects" },
   { icon: Building2, label: "Rooms & laboratories", path: "/#facilities" },
   { icon: Users, label: "Staff & roles", path: "/#staff" },
   { icon: ShieldCheck, label: "Permissions", path: "/#permissions" },
   { icon: ClipboardList, label: "Teacher assignments", path: "/#assignments" },
+  { icon: History, label: "Learner academic history", path: "/academic" },
+  { icon: HeartPulse, label: "Attendance & learner welfare", path: "/welfare" },
+  { icon: Banknote, label: "School finance", path: "/finance" },
+  {
+    icon: CalendarDays,
+    label: "Timetable & daily operations",
+    path: "/timetable",
+  },
+  { icon: GraduationCap, label: "Learner & guardian portal", path: "/portal" },
+  {
+    icon: ShieldCheck,
+    label: "Reports, audit & system health",
+    path: "/production-readiness",
+  },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
@@ -60,7 +97,7 @@ export default function DashboardLayout({
   }, [sidebarWidth]);
 
   if (loading) {
-    return <DashboardLayoutSkeleton />
+    return <DashboardLayoutSkeleton />;
   }
 
   if (!user) {
@@ -72,7 +109,8 @@ export default function DashboardLayout({
               Sign in to continue
             </h1>
             <p className="text-sm text-muted-foreground text-center max-w-sm">
-              Access to this dashboard requires authentication. Continue to launch the login flow.
+              Access to this dashboard requires authentication. Continue to
+              launch the login flow.
             </p>
           </div>
           <Button
@@ -112,12 +150,27 @@ function DashboardLayoutContent({
   setSidebarWidth,
 }: DashboardLayoutContentProps) {
   const { user, logout } = useAuth();
+  const { data: roleDashboard } = trpc.dashboard.role.useQuery(undefined, {
+    enabled: Boolean(user),
+  });
   const [location, setLocation] = useLocation();
   const { state, toggleSidebar } = useSidebar();
   const isCollapsed = state === "collapsed";
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const activeMenuItem = menuItems.find(item => item.path === location);
+  const roleMenuItems =
+    roleDashboard?.navigation?.map(item => ({
+      ...item,
+      icon: menuIconForPath(item.path),
+    })) ?? [];
+  const visibleMenuItems =
+    user?.role === "admin"
+      ? menuItems
+      : [
+          { icon: LayoutDashboard, label: "My dashboard", path: "/" },
+          ...roleMenuItems,
+        ];
+  const activeMenuItem = visibleMenuItems.find(item => item.path === location);
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -185,7 +238,7 @@ function DashboardLayoutContent({
 
           <SidebarContent className="gap-0">
             <SidebarMenu className="px-2 py-1">
-              {menuItems.map(item => {
+              {visibleMenuItems.map(item => {
                 const isActive = location === item.path;
                 return (
                   <SidebarMenuItem key={item.path}>
@@ -266,4 +319,13 @@ function DashboardLayoutContent({
       </SidebarInset>
     </>
   );
+}
+
+function menuIconForPath(path: string) {
+  if (path === "/finance") return Banknote;
+  if (path === "/welfare") return HeartPulse;
+  if (path === "/timetable") return CalendarDays;
+  if (path === "/portal") return GraduationCap;
+  if (path === "/production-readiness") return ShieldCheck;
+  return BookOpenCheck;
 }

@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/PraiseTechzw/zimbabwe-school-admin/security/policy
+    about: Please follow the private security reporting process. Do not post vulnerabilities publicly.
+  - name: Support and setup help
+    url: https://github.com/PraiseTechzw/zimbabwe-school-admin/blob/main/SUPPORT.md
+    about: Read the support guide before opening a setup or usage request.
+  - name: Contribution workflow
+    url: https://github.com/PraiseTechzw/zimbabwe-school-admin/blob/main/docs/GITHUB_WORKFLOW.md
+    about: Follow the project branch, issue, pull request, and review workflow.
