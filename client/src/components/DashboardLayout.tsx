@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { startLogin } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { BookOpenCheck, Building2, CalendarDays, ClipboardList, GraduationCap, LayoutDashboard, LogOut, PanelLeft, ShieldCheck, Users } from "lucide-react";
+import { Banknote, BookOpenCheck, Building2, CalendarDays, ClipboardList, GraduationCap, HeartPulse, History, LayoutDashboard, LogOut, PanelLeft, ShieldCheck, Users } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -37,6 +37,12 @@ const menuItems = [
   { icon: Users, label: "Staff & roles", path: "/#staff" },
   { icon: ShieldCheck, label: "Permissions", path: "/#permissions" },
   { icon: ClipboardList, label: "Teacher assignments", path: "/#assignments" },
+  { icon: History, label: "Learner academic history", path: "/academic" },
+  { icon: HeartPulse, label: "Attendance & learner welfare", path: "/welfare" },
+  { icon: Banknote, label: "School finance", path: "/finance" },
+  { icon: CalendarDays, label: "Timetable & daily operations", path: "/timetable" },
+  { icon: GraduationCap, label: "Learner & guardian portal", path: "/portal" },
+  { icon: ShieldCheck, label: "Reports, audit & system health", path: "/production-readiness" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";

@@ -123,12 +123,17 @@ The foundation workflow is deliberately capability-aware: the server checks the 
 | --- | --- | --- |
 | Stage 1 | School identity, academic foundation, people, facilities, permissions, assignments, and secure file references | In progress / foundation build |
 | Stage 2 | Student records, guardians, enrolment, and class lists | Planned |
-| Stage 3 | Attendance, assessment, report cards, and academic reporting | Planned |
-| Stage 4 | Communication, dashboards, exports, and operational workflows | Planned |
+| Stage 3 | Learner academic history, explicit progression, ZIMSEC results, configurable A-Level admission, and portal status | Implemented in [`docs/STAGE3_ACADEMIC_HISTORY.md`](docs/STAGE3_ACADEMIC_HISTORY.md) |
+| Stage 4 | Fee structures, invoicing, and payment tracking | Implemented in `server/finance.ts` and the finance tRPC domain |
+| Stage 5 | Attendance, discipline, learner welfare, safeguarding, medical, and boarding workflows | Implemented in [`docs/STAGE5_ATTENDANCE_WELFARE.md`](docs/STAGE5_ATTENDANCE_WELFARE.md) |
+| Stage 6 | School finance, USD/ZiG accounts, invoices, payments, assistance, reconciliation, reports, and Paynow configuration | Implemented in [`docs/STAGE6_SCHOOL_FINANCE.md`](docs/STAGE6_SCHOOL_FINANCE.md) |
+| Stage 7 | Communication, dashboards, exports, and operational workflows | Planned |
+| Stage 8 | School timetable, teacher workload, room and laboratory allocation, clash detection, and daily operations | Implemented in [`docs/STAGE8_TIMETABLE_OPERATIONS.md`](docs/STAGE8_TIMETABLE_OPERATIONS.md) |
+| Stage 11 | Reporting, audit, security, Student ID integrity, system health, notifications, and production readiness | Implemented in [`docs/STAGE11_PRODUCTION_READINESS.md`](docs/STAGE11_PRODUCTION_READINESS.md) |
 
 ## Contributing
 
-Contributions are welcome when they improve correctness, usability, security, or suitability for Zimbabwean school workflows. Please read [`CONTRIBUTING.md`](CONTRIBUTING.md) before opening an issue or pull request. All participants are expected to follow the project’s [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
+Contributions are welcome when they improve correctness, usability, security, or suitability for Zimbabwean school workflows. Please read [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`docs/GITHUB_WORKFLOW.md`](docs/GITHUB_WORKFLOW.md) before opening an issue or pull request. Coding agents must also follow [`AGENTS.md`](AGENTS.md). All participants are expected to follow the project’s [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
 
 ## Security
 
