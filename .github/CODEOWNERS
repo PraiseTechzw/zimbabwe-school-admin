@@ -1,0 +1,9 @@
+# Default owner for all repository changes.
+# Keep this file aligned with the maintainers who are responsible for review.
+* @PraiseTechzw
+
+# Higher-risk areas still require project-owner review.
+/server/ @PraiseTechzw
+/drizzle/ @PraiseTechzw
+/.github/ @PraiseTechzw
+/SECURITY.md @PraiseTechzw

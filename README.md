@@ -128,7 +128,7 @@ The foundation workflow is deliberately capability-aware: the server checks the 
 
 ## Contributing
 
-Contributions are welcome when they improve correctness, usability, security, or suitability for Zimbabwean school workflows. Please read [`CONTRIBUTING.md`](CONTRIBUTING.md) before opening an issue or pull request. All participants are expected to follow the project’s [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
+Contributions are welcome when they improve correctness, usability, security, or suitability for Zimbabwean school workflows. Please read [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`docs/GITHUB_WORKFLOW.md`](docs/GITHUB_WORKFLOW.md) before opening an issue or pull request. Coding agents must also follow [`AGENTS.md`](AGENTS.md). All participants are expected to follow the project’s [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
 
 ## Security
 
