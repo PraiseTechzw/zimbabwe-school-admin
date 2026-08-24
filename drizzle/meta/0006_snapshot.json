@@ -1,0 +1,6737 @@
+{
+  "version": "5",
+  "dialect": "mysql",
+  "id": "79200dba-c952-49bd-9ecc-7d8aceeb98be",
+  "prevId": "71f4941d-2763-4214-b249-51a0c5d81f1b",
+  "tables": {
+    "a_level_application_subjects": {
+      "name": "a_level_application_subjects",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "applicationId": {
+          "name": "applicationId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "subjectId": {
+          "name": "subjectId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "subjectName": {
+          "name": "subjectName",
+          "type": "varchar(140)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "a_level_application_subject_unique": {
+          "name": "a_level_application_subject_unique",
+          "columns": [
+            "applicationId",
+            "subjectId"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "a_level_application_subjects_applicationId_a_level_applications_id_fk": {
+          "name": "a_level_application_subjects_applicationId_a_level_applications_id_fk",
+          "tableFrom": "a_level_application_subjects",
+          "tableTo": "a_level_applications",
+          "columnsFrom": [
+            "applicationId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "a_level_application_subjects_subjectId_subjects_id_fk": {
+          "name": "a_level_application_subjects_subjectId_subjects_id_fk",
+          "tableFrom": "a_level_application_subjects",
+          "tableTo": "subjects",
+          "columnsFrom": [
+            "subjectId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "a_level_application_subjects_id": {
+          "name": "a_level_application_subjects_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "a_level_applications": {
+      "name": "a_level_applications",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "academicYearId": {
+          "name": "academicYearId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "oLevelResultId": {
+          "name": "oLevelResultId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "requirementId": {
+          "name": "requirementId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "pathway": {
+          "name": "pathway",
+          "type": "enum('O_LEVEL','A_LEVEL')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'A_LEVEL'"
+        },
+        "applicationStatus": {
+          "name": "applicationStatus",
+          "type": "enum('NOT_STARTED','DRAFT','SUBMITTED','UNDER_REVIEW','RESULTS_VERIFICATION','ACCEPTED','CONDITIONALLY_ACCEPTED','REJECTED','WITHDRAWN')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'NOT_STARTED'"
+        },
+        "verificationStatus": {
+          "name": "verificationStatus",
+          "type": "enum('NOT_STARTED','PENDING','VERIFIED','FAILED')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'NOT_STARTED'"
+        },
+        "selectionDecision": {
+          "name": "selectionDecision",
+          "type": "enum('PENDING','SELECTED','NOT_SELECTED','ADMITTED','NOT_ADMITTED')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'PENDING'"
+        },
+        "admissionDecision": {
+          "name": "admissionDecision",
+          "type": "enum('PENDING','SELECTED','NOT_SELECTED','ADMITTED','NOT_ADMITTED')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'PENDING'"
+        },
+        "submittedAt": {
+          "name": "submittedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "reviewedByUserId": {
+          "name": "reviewedByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "reviewedAt": {
+          "name": "reviewedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "onUpdate": true,
+          "default": "(now())"
+        }
+      },
+      "indexes": {
+        "a_level_application_learner_year_unique": {
+          "name": "a_level_application_learner_year_unique",
+          "columns": [
+            "learnerId",
+            "academicYearId"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "a_level_applications_learnerId_learners_id_fk": {
+          "name": "a_level_applications_learnerId_learners_id_fk",
+          "tableFrom": "a_level_applications",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "a_level_applications_academicYearId_academic_years_id_fk": {
+          "name": "a_level_applications_academicYearId_academic_years_id_fk",
+          "tableFrom": "a_level_applications",
+          "tableTo": "academic_years",
+          "columnsFrom": [
+            "academicYearId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "a_level_applications_oLevelResultId_o_level_results_id_fk": {
+          "name": "a_level_applications_oLevelResultId_o_level_results_id_fk",
+          "tableFrom": "a_level_applications",
+          "tableTo": "o_level_results",
+          "columnsFrom": [
+            "oLevelResultId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "a_level_applications_requirementId_a_level_requirements_id_fk": {
+          "name": "a_level_applications_requirementId_a_level_requirements_id_fk",
+          "tableFrom": "a_level_applications",
+          "tableTo": "a_level_requirements",
+          "columnsFrom": [
+            "requirementId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "a_level_applications_reviewedByUserId_users_id_fk": {
+          "name": "a_level_applications_reviewedByUserId_users_id_fk",
+          "tableFrom": "a_level_applications",
+          "tableTo": "users",
+          "columnsFrom": [
+            "reviewedByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "a_level_applications_id": {
+          "name": "a_level_applications_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "a_level_requirement_subjects": {
+      "name": "a_level_requirement_subjects",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "requirementId": {
+          "name": "requirementId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "subjectId": {
+          "name": "subjectId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "minimumGrade": {
+          "name": "minimumGrade",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "isRequired": {
+          "name": "isRequired",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        }
+      },
+      "indexes": {
+        "a_level_requirement_subject_unique": {
+          "name": "a_level_requirement_subject_unique",
+          "columns": [
+            "requirementId",
+            "subjectId"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "a_level_requirement_subjects_requirementId_a_level_requirements_id_fk": {
+          "name": "a_level_requirement_subjects_requirementId_a_level_requirements_id_fk",
+          "tableFrom": "a_level_requirement_subjects",
+          "tableTo": "a_level_requirements",
+          "columnsFrom": [
+            "requirementId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "a_level_requirement_subjects_subjectId_subjects_id_fk": {
+          "name": "a_level_requirement_subjects_subjectId_subjects_id_fk",
+          "tableFrom": "a_level_requirement_subjects",
+          "tableTo": "subjects",
+          "columnsFrom": [
+            "subjectId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "a_level_requirement_subjects_id": {
+          "name": "a_level_requirement_subjects_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "a_level_requirements": {
+      "name": "a_level_requirements",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "minimumPoints": {
+          "name": "minimumPoints",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "minimumPasses": {
+          "name": "minimumPasses",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "isActive": {
+          "name": "isActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
+        },
+        "createdByUserId": {
+          "name": "createdByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "a_level_requirements_createdByUserId_users_id_fk": {
+          "name": "a_level_requirements_createdByUserId_users_id_fk",
+          "tableFrom": "a_level_requirements",
+          "tableTo": "users",
+          "columnsFrom": [
+            "createdByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "a_level_requirements_id": {
+          "name": "a_level_requirements_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "academic_terms": {
+      "name": "academic_terms",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "academicYearId": {
+          "name": "academicYearId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "termNumber": {
+          "name": "termNumber",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "startDate": {
+          "name": "startDate",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "endDate": {
+          "name": "endDate",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "isCurrent": {
+          "name": "isCurrent",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        }
+      },
+      "indexes": {
+        "academic_term_year_number_unique": {
+          "name": "academic_term_year_number_unique",
+          "columns": [
+            "academicYearId",
+            "termNumber"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "academic_terms_academicYearId_academic_years_id_fk": {
+          "name": "academic_terms_academicYearId_academic_years_id_fk",
+          "tableFrom": "academic_terms",
+          "tableTo": "academic_years",
+          "columnsFrom": [
+            "academicYearId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "academic_terms_id": {
+          "name": "academic_terms_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "academic_years": {
+      "name": "academic_years",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "startDate": {
+          "name": "startDate",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "endDate": {
+          "name": "endDate",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "isCurrent": {
+          "name": "isCurrent",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {
+        "academic_year_name_unique": {
+          "name": "academic_year_name_unique",
+          "columns": [
+            "name"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "academic_years_id": {
+          "name": "academic_years_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "approved_school_charges": {
+      "name": "approved_school_charges",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "code": {
+          "name": "code",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "amountMinor": {
+          "name": "amountMinor",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "residencyType": {
+          "name": "residencyType",
+          "type": "enum('BOARDING','DAY_SCHOLAR','ALL')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'ALL'"
+        },
+        "chargeStatus": {
+          "name": "chargeStatus",
+          "type": "enum('DRAFT','SUBMITTED','APPROVED','RETIRED')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'DRAFT'"
+        },
+        "approvedByUserId": {
+          "name": "approvedByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "approvedAt": {
+          "name": "approvedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdByUserId": {
+          "name": "createdByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {
+        "approved_school_charge_code_unique": {
+          "name": "approved_school_charge_code_unique",
+          "columns": [
+            "code"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "approved_school_charges_approvedByUserId_users_id_fk": {
+          "name": "approved_school_charges_approvedByUserId_users_id_fk",
+          "tableFrom": "approved_school_charges",
+          "tableTo": "users",
+          "columnsFrom": [
+            "approvedByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "approved_school_charges_createdByUserId_users_id_fk": {
+          "name": "approved_school_charges_createdByUserId_users_id_fk",
+          "tableFrom": "approved_school_charges",
+          "tableTo": "users",
+          "columnsFrom": [
+            "createdByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "approved_school_charges_id": {
+          "name": "approved_school_charges_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "attendance_records": {
+      "name": "attendance_records",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "sessionId": {
+          "name": "sessionId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "attendanceStatus": {
+          "name": "attendanceStatus",
+          "type": "enum('PRESENT','ABSENT','LATE','EXCUSED')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "arrivalTime": {
+          "name": "arrivalTime",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "reason": {
+          "name": "reason",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "note": {
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "guardianAlerted": {
+          "name": "guardianAlerted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "alertSentAt": {
+          "name": "alertSentAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {
+        "attendance_session_learner_unique": {
+          "name": "attendance_session_learner_unique",
+          "columns": [
+            "sessionId",
+            "learnerId"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "attendance_records_sessionId_attendance_sessions_id_fk": {
+          "name": "attendance_records_sessionId_attendance_sessions_id_fk",
+          "tableFrom": "attendance_records",
+          "tableTo": "attendance_sessions",
+          "columnsFrom": [
+            "sessionId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "attendance_records_learnerId_learners_id_fk": {
+          "name": "attendance_records_learnerId_learners_id_fk",
+          "tableFrom": "attendance_records",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "attendance_records_id": {
+          "name": "attendance_records_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "attendance_sessions": {
+      "name": "attendance_sessions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "academicYearId": {
+          "name": "academicYearId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "termId": {
+          "name": "termId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "classId": {
+          "name": "classId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "sessionDate": {
+          "name": "sessionDate",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "attendanceMode": {
+          "name": "attendanceMode",
+          "type": "enum('DAILY','PERIOD','BOARDING_ROLL_CALL')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "periodNumber": {
+          "name": "periodNumber",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "periodName": {
+          "name": "periodName",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "recordedByUserId": {
+          "name": "recordedByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "attendance_sessions_academicYearId_academic_years_id_fk": {
+          "name": "attendance_sessions_academicYearId_academic_years_id_fk",
+          "tableFrom": "attendance_sessions",
+          "tableTo": "academic_years",
+          "columnsFrom": [
+            "academicYearId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "attendance_sessions_termId_academic_terms_id_fk": {
+          "name": "attendance_sessions_termId_academic_terms_id_fk",
+          "tableFrom": "attendance_sessions",
+          "tableTo": "academic_terms",
+          "columnsFrom": [
+            "termId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "attendance_sessions_classId_classes_id_fk": {
+          "name": "attendance_sessions_classId_classes_id_fk",
+          "tableFrom": "attendance_sessions",
+          "tableTo": "classes",
+          "columnsFrom": [
+            "classId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "attendance_sessions_recordedByUserId_users_id_fk": {
+          "name": "attendance_sessions_recordedByUserId_users_id_fk",
+          "tableFrom": "attendance_sessions",
+          "tableTo": "users",
+          "columnsFrom": [
+            "recordedByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "attendance_sessions_id": {
+          "name": "attendance_sessions_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "beam_records": {
+      "name": "beam_records",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "financialAccountId": {
+          "name": "financialAccountId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "academicYearId": {
+          "name": "academicYearId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "referenceNumber": {
+          "name": "referenceNumber",
+          "type": "varchar(120)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "amountMinor": {
+          "name": "amountMinor",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "assistanceStatus": {
+          "name": "assistanceStatus",
+          "type": "enum('PENDING','APPROVED','DECLINED','EXPIRED')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'PENDING'"
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "approvedByUserId": {
+          "name": "approvedByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "beam_records_learnerId_learners_id_fk": {
+          "name": "beam_records_learnerId_learners_id_fk",
+          "tableFrom": "beam_records",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "beam_records_financialAccountId_financial_accounts_id_fk": {
+          "name": "beam_records_financialAccountId_financial_accounts_id_fk",
+          "tableFrom": "beam_records",
+          "tableTo": "financial_accounts",
+          "columnsFrom": [
+            "financialAccountId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "beam_records_academicYearId_academic_years_id_fk": {
+          "name": "beam_records_academicYearId_academic_years_id_fk",
+          "tableFrom": "beam_records",
+          "tableTo": "academic_years",
+          "columnsFrom": [
+            "academicYearId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "beam_records_approvedByUserId_users_id_fk": {
+          "name": "beam_records_approvedByUserId_users_id_fk",
+          "tableFrom": "beam_records",
+          "tableTo": "users",
+          "columnsFrom": [
+            "approvedByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "beam_records_id": {
+          "name": "beam_records_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "classes": {
+      "name": "classes",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "formId": {
+          "name": "formId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "streamName": {
+          "name": "streamName",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "attendanceMode": {
+          "name": "attendanceMode",
+          "type": "enum('DAY_SCHOLAR','BOARDING','MIXED')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'MIXED'"
+        },
+        "roomId": {
+          "name": "roomId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "isActive": {
+          "name": "isActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
+        }
+      },
+      "indexes": {
+        "class_form_stream_unique": {
+          "name": "class_form_stream_unique",
+          "columns": [
+            "formId",
+            "name",
+            "streamName"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "classes_formId_forms_id_fk": {
+          "name": "classes_formId_forms_id_fk",
+          "tableFrom": "classes",
+          "tableTo": "forms",
+          "columnsFrom": [
+            "formId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "classes_roomId_rooms_id_fk": {
+          "name": "classes_roomId_rooms_id_fk",
+          "tableFrom": "classes",
+          "tableTo": "rooms",
+          "columnsFrom": [
+            "roomId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "classes_id": {
+          "name": "classes_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "counselling_records": {
+      "name": "counselling_records",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "sessionAt": {
+          "name": "sessionAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "summary": {
+          "name": "summary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "outcome": {
+          "name": "outcome",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "followUpAt": {
+          "name": "followUpAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "recordedByUserId": {
+          "name": "recordedByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "counselling_records_learnerId_learners_id_fk": {
+          "name": "counselling_records_learnerId_learners_id_fk",
+          "tableFrom": "counselling_records",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "counselling_records_recordedByUserId_users_id_fk": {
+          "name": "counselling_records_recordedByUserId_users_id_fk",
+          "tableFrom": "counselling_records",
+          "tableTo": "users",
+          "columnsFrom": [
+            "recordedByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "counselling_records_id": {
+          "name": "counselling_records_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "school_departments": {
+      "name": "school_departments",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(120)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "code": {
+          "name": "code",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "hodStaffId": {
+          "name": "hodStaffId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "isActive": {
+          "name": "isActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
+        }
+      },
+      "indexes": {
+        "school_department_code_unique": {
+          "name": "school_department_code_unique",
+          "columns": [
+            "code"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "school_departments_id": {
+          "name": "school_departments_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "discipline_actions": {
+      "name": "discipline_actions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "incidentId": {
+          "name": "incidentId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "disciplineActionType": {
+          "name": "disciplineActionType",
+          "type": "enum('NONE','DEMERIT','DETENTION','SUSPENSION')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "points": {
+          "name": "points",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "startAt": {
+          "name": "startAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "endAt": {
+          "name": "endAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "completedAt": {
+          "name": "completedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdByUserId": {
+          "name": "createdByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "discipline_actions_incidentId_discipline_incidents_id_fk": {
+          "name": "discipline_actions_incidentId_discipline_incidents_id_fk",
+          "tableFrom": "discipline_actions",
+          "tableTo": "discipline_incidents",
+          "columnsFrom": [
+            "incidentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "discipline_actions_createdByUserId_users_id_fk": {
+          "name": "discipline_actions_createdByUserId_users_id_fk",
+          "tableFrom": "discipline_actions",
+          "tableTo": "users",
+          "columnsFrom": [
+            "createdByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "discipline_actions_id": {
+          "name": "discipline_actions_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "discipline_incidents": {
+      "name": "discipline_incidents",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "occurredAt": {
+          "name": "occurredAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "category": {
+          "name": "category",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "severity": {
+          "name": "severity",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
+        },
+        "summary": {
+          "name": "summary",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "details": {
+          "name": "details",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "disciplineIncidentStatus": {
+          "name": "disciplineIncidentStatus",
+          "type": "enum('OPEN','RESOLVED','REFERRED')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'OPEN'"
+        },
+        "reportedByUserId": {
+          "name": "reportedByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "discipline_incidents_learnerId_learners_id_fk": {
+          "name": "discipline_incidents_learnerId_learners_id_fk",
+          "tableFrom": "discipline_incidents",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "discipline_incidents_reportedByUserId_users_id_fk": {
+          "name": "discipline_incidents_reportedByUserId_users_id_fk",
+          "tableFrom": "discipline_incidents",
+          "tableTo": "users",
+          "columnsFrom": [
+            "reportedByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "discipline_incidents_id": {
+          "name": "discipline_incidents_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "exeat_requests": {
+      "name": "exeat_requests",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "requestedByUserId": {
+          "name": "requestedByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "requestedAt": {
+          "name": "requestedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "departureAt": {
+          "name": "departureAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "expectedReturnAt": {
+          "name": "expectedReturnAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "destination": {
+          "name": "destination",
+          "type": "varchar(240)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reason": {
+          "name": "reason",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "exeatStatus": {
+          "name": "exeatStatus",
+          "type": "enum('REQUESTED','APPROVED','DECLINED','RETURNED','CANCELLED')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'REQUESTED'"
+        },
+        "decisionNotes": {
+          "name": "decisionNotes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "decidedByUserId": {
+          "name": "decidedByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "decidedAt": {
+          "name": "decidedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "exeat_requests_learnerId_learners_id_fk": {
+          "name": "exeat_requests_learnerId_learners_id_fk",
+          "tableFrom": "exeat_requests",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "exeat_requests_requestedByUserId_users_id_fk": {
+          "name": "exeat_requests_requestedByUserId_users_id_fk",
+          "tableFrom": "exeat_requests",
+          "tableTo": "users",
+          "columnsFrom": [
+            "requestedByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "exeat_requests_decidedByUserId_users_id_fk": {
+          "name": "exeat_requests_decidedByUserId_users_id_fk",
+          "tableFrom": "exeat_requests",
+          "tableTo": "users",
+          "columnsFrom": [
+            "decidedByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "exeat_requests_id": {
+          "name": "exeat_requests_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "fee_structure_items": {
+      "name": "fee_structure_items",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "feeStructureId": {
+          "name": "feeStructureId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "code": {
+          "name": "code",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "amountMinor": {
+          "name": "amountMinor",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "feeFrequency": {
+          "name": "feeFrequency",
+          "type": "enum('ONCE','TERM','ANNUAL')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'TERM'"
+        },
+        "isMandatory": {
+          "name": "isMandatory",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
+        }
+      },
+      "indexes": {
+        "fee_structure_item_code_unique": {
+          "name": "fee_structure_item_code_unique",
+          "columns": [
+            "feeStructureId",
+            "code"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "fee_structure_items_feeStructureId_fee_structures_id_fk": {
+          "name": "fee_structure_items_feeStructureId_fee_structures_id_fk",
+          "tableFrom": "fee_structure_items",
+          "tableTo": "fee_structures",
+          "columnsFrom": [
+            "feeStructureId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "fee_structure_items_id": {
+          "name": "fee_structure_items_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "fee_structures": {
+      "name": "fee_structures",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "academicYearId": {
+          "name": "academicYearId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "formId": {
+          "name": "formId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "pathway": {
+          "name": "pathway",
+          "type": "enum('O_LEVEL','A_LEVEL')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'A_LEVEL'"
+        },
+        "residencyType": {
+          "name": "residencyType",
+          "type": "enum('BOARDING','DAY_SCHOLAR','ALL')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'ALL'"
+        },
+        "currency": {
+          "name": "currency",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'USD'"
+        },
+        "isActive": {
+          "name": "isActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
+        },
+        "createdByUserId": {
+          "name": "createdByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "fee_structures_academicYearId_academic_years_id_fk": {
+          "name": "fee_structures_academicYearId_academic_years_id_fk",
+          "tableFrom": "fee_structures",
+          "tableTo": "academic_years",
+          "columnsFrom": [
+            "academicYearId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "fee_structures_formId_forms_id_fk": {
+          "name": "fee_structures_formId_forms_id_fk",
+          "tableFrom": "fee_structures",
+          "tableTo": "forms",
+          "columnsFrom": [
+            "formId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "fee_structures_createdByUserId_users_id_fk": {
+          "name": "fee_structures_createdByUserId_users_id_fk",
+          "tableFrom": "fee_structures",
+          "tableTo": "users",
+          "columnsFrom": [
+            "createdByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "fee_structures_id": {
+          "name": "fee_structures_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "financial_accounts": {
+      "name": "financial_accounts",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "accountNumber": {
+          "name": "accountNumber",
+          "type": "varchar(60)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'USD'"
+        },
+        "isActive": {
+          "name": "isActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {
+        "financial_account_number_unique": {
+          "name": "financial_account_number_unique",
+          "columns": [
+            "accountNumber"
+          ],
+          "isUnique": true
+        },
+        "financial_account_learner_currency_unique": {
+          "name": "financial_account_learner_currency_unique",
+          "columns": [
+            "learnerId",
+            "currency"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "financial_accounts_learnerId_learners_id_fk": {
+          "name": "financial_accounts_learnerId_learners_id_fk",
+          "tableFrom": "financial_accounts",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "financial_accounts_id": {
+          "name": "financial_accounts_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "forms": {
+      "name": "forms",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "formNumber": {
+          "name": "formNumber",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "pathway": {
+          "name": "pathway",
+          "type": "enum('O_LEVEL','A_LEVEL')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "label": {
+          "name": "label",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "isActive": {
+          "name": "isActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
+        }
+      },
+      "indexes": {
+        "form_number_unique": {
+          "name": "form_number_unique",
+          "columns": [
+            "formNumber"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "forms_id": {
+          "name": "forms_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "guardian_alerts": {
+      "name": "guardian_alerts",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "attendanceRecordId": {
+          "name": "attendanceRecordId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "guardianAlertType": {
+          "name": "guardianAlertType",
+          "type": "enum('ABSENCE','LATE_ARRIVAL','WELFARE')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "guardianAlertStatus": {
+          "name": "guardianAlertStatus",
+          "type": "enum('QUEUED','SENT','FAILED')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'QUEUED'"
+        },
+        "message": {
+          "name": "message",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "queuedAt": {
+          "name": "queuedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "sentAt": {
+          "name": "sentAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "failureReason": {
+          "name": "failureReason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "guardian_alerts_learnerId_learners_id_fk": {
+          "name": "guardian_alerts_learnerId_learners_id_fk",
+          "tableFrom": "guardian_alerts",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "guardian_alerts_attendanceRecordId_attendance_records_id_fk": {
+          "name": "guardian_alerts_attendanceRecordId_attendance_records_id_fk",
+          "tableFrom": "guardian_alerts",
+          "tableTo": "attendance_records",
+          "columnsFrom": [
+            "attendanceRecordId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "guardian_alerts_id": {
+          "name": "guardian_alerts_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "guardian_contacts": {
+      "name": "guardian_contacts",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "firstName": {
+          "name": "firstName",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "lastName": {
+          "name": "lastName",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "relationship": {
+          "name": "relationship",
+          "type": "varchar(60)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(320)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "guardian_contacts_userId_users_id_fk": {
+          "name": "guardian_contacts_userId_users_id_fk",
+          "tableFrom": "guardian_contacts",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "guardian_contacts_id": {
+          "name": "guardian_contacts_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "houses": {
+      "name": "houses",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "colour": {
+          "name": "colour",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "isActive": {
+          "name": "isActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
+        }
+      },
+      "indexes": {
+        "house_name_unique": {
+          "name": "house_name_unique",
+          "columns": [
+            "name"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "houses_id": {
+          "name": "houses_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "invoice_lines": {
+      "name": "invoice_lines",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "invoiceId": {
+          "name": "invoiceId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "feeItemId": {
+          "name": "feeItemId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar(180)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
+        },
+        "unitAmountMinor": {
+          "name": "unitAmountMinor",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "lineTotalMinor": {
+          "name": "lineTotalMinor",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "invoice_lines_invoiceId_invoices_id_fk": {
+          "name": "invoice_lines_invoiceId_invoices_id_fk",
+          "tableFrom": "invoice_lines",
+          "tableTo": "invoices",
+          "columnsFrom": [
+            "invoiceId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "invoice_lines_feeItemId_fee_structure_items_id_fk": {
+          "name": "invoice_lines_feeItemId_fee_structure_items_id_fk",
+          "tableFrom": "invoice_lines",
+          "tableTo": "fee_structure_items",
+          "columnsFrom": [
+            "feeItemId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "invoice_lines_id": {
+          "name": "invoice_lines_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "invoices": {
+      "name": "invoices",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "invoiceNumber": {
+          "name": "invoiceNumber",
+          "type": "varchar(60)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "financialAccountId": {
+          "name": "financialAccountId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "academicYearId": {
+          "name": "academicYearId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "termId": {
+          "name": "termId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "feeStructureId": {
+          "name": "feeStructureId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "subtotalMinor": {
+          "name": "subtotalMinor",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "discountMinor": {
+          "name": "discountMinor",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "totalMinor": {
+          "name": "totalMinor",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "invoiceStatus": {
+          "name": "invoiceStatus",
+          "type": "enum('DRAFT','ISSUED','PARTIALLY_PAID','PAID','VOID','OVERDUE')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'DRAFT'"
+        },
+        "issuedAt": {
+          "name": "issuedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "dueDate": {
+          "name": "dueDate",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdByUserId": {
+          "name": "createdByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "onUpdate": true,
+          "default": "(now())"
+        }
+      },
+      "indexes": {
+        "invoice_number_unique": {
+          "name": "invoice_number_unique",
+          "columns": [
+            "invoiceNumber"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "invoices_learnerId_learners_id_fk": {
+          "name": "invoices_learnerId_learners_id_fk",
+          "tableFrom": "invoices",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "invoices_financialAccountId_financial_accounts_id_fk": {
+          "name": "invoices_financialAccountId_financial_accounts_id_fk",
+          "tableFrom": "invoices",
+          "tableTo": "financial_accounts",
+          "columnsFrom": [
+            "financialAccountId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "invoices_academicYearId_academic_years_id_fk": {
+          "name": "invoices_academicYearId_academic_years_id_fk",
+          "tableFrom": "invoices",
+          "tableTo": "academic_years",
+          "columnsFrom": [
+            "academicYearId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "invoices_termId_academic_terms_id_fk": {
+          "name": "invoices_termId_academic_terms_id_fk",
+          "tableFrom": "invoices",
+          "tableTo": "academic_terms",
+          "columnsFrom": [
+            "termId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "invoices_feeStructureId_fee_structures_id_fk": {
+          "name": "invoices_feeStructureId_fee_structures_id_fk",
+          "tableFrom": "invoices",
+          "tableTo": "fee_structures",
+          "columnsFrom": [
+            "feeStructureId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "invoices_createdByUserId_users_id_fk": {
+          "name": "invoices_createdByUserId_users_id_fk",
+          "tableFrom": "invoices",
+          "tableTo": "users",
+          "columnsFrom": [
+            "createdByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "invoices_id": {
+          "name": "invoices_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "learner_academic_history": {
+      "name": "learner_academic_history",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "academicYearId": {
+          "name": "academicYearId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "termId": {
+          "name": "termId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "formId": {
+          "name": "formId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "classId": {
+          "name": "classId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "pathway": {
+          "name": "pathway",
+          "type": "enum('O_LEVEL','A_LEVEL')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "registrationStatus": {
+          "name": "registrationStatus",
+          "type": "enum('ACTIVE','INACTIVE','WITHDRAWN','COMPLETED')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'ACTIVE'"
+        },
+        "progressionType": {
+          "name": "progressionType",
+          "type": "enum('NORMAL_SECONDARY','A_LEVEL_ADMISSION','A_LEVEL_CONTINUATION')",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "previousHistoryId": {
+          "name": "previousHistoryId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "recordedByUserId": {
+          "name": "recordedByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {
+        "learner_history_year_term_unique": {
+          "name": "learner_history_year_term_unique",
+          "columns": [
+            "learnerId",
+            "academicYearId",
+            "termId"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "learner_academic_history_learnerId_learners_id_fk": {
+          "name": "learner_academic_history_learnerId_learners_id_fk",
+          "tableFrom": "learner_academic_history",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "learner_academic_history_academicYearId_academic_years_id_fk": {
+          "name": "learner_academic_history_academicYearId_academic_years_id_fk",
+          "tableFrom": "learner_academic_history",
+          "tableTo": "academic_years",
+          "columnsFrom": [
+            "academicYearId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "learner_academic_history_termId_academic_terms_id_fk": {
+          "name": "learner_academic_history_termId_academic_terms_id_fk",
+          "tableFrom": "learner_academic_history",
+          "tableTo": "academic_terms",
+          "columnsFrom": [
+            "termId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "learner_academic_history_formId_forms_id_fk": {
+          "name": "learner_academic_history_formId_forms_id_fk",
+          "tableFrom": "learner_academic_history",
+          "tableTo": "forms",
+          "columnsFrom": [
+            "formId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "learner_academic_history_classId_classes_id_fk": {
+          "name": "learner_academic_history_classId_classes_id_fk",
+          "tableFrom": "learner_academic_history",
+          "tableTo": "classes",
+          "columnsFrom": [
+            "classId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "learner_academic_history_recordedByUserId_users_id_fk": {
+          "name": "learner_academic_history_recordedByUserId_users_id_fk",
+          "tableFrom": "learner_academic_history",
+          "tableTo": "users",
+          "columnsFrom": [
+            "recordedByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "learner_academic_history_id": {
+          "name": "learner_academic_history_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "learner_assignments": {
+      "name": "learner_assignments",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "classId": {
+          "name": "classId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "subjectId": {
+          "name": "subjectId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(180)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "dueAt": {
+          "name": "dueAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "portalAssignmentStatus": {
+          "name": "portalAssignmentStatus",
+          "type": "enum('ASSIGNED','SUBMITTED','GRADED','OVERDUE')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'ASSIGNED'"
+        },
+        "documentUrl": {
+          "name": "documentUrl",
+          "type": "varchar(800)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdByUserId": {
+          "name": "createdByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "learner_assignments_classId_classes_id_fk": {
+          "name": "learner_assignments_classId_classes_id_fk",
+          "tableFrom": "learner_assignments",
+          "tableTo": "classes",
+          "columnsFrom": [
+            "classId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "learner_assignments_subjectId_subjects_id_fk": {
+          "name": "learner_assignments_subjectId_subjects_id_fk",
+          "tableFrom": "learner_assignments",
+          "tableTo": "subjects",
+          "columnsFrom": [
+            "subjectId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "learner_assignments_createdByUserId_users_id_fk": {
+          "name": "learner_assignments_createdByUserId_users_id_fk",
+          "tableFrom": "learner_assignments",
+          "tableTo": "users",
+          "columnsFrom": [
+            "createdByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "learner_assignments_id": {
+          "name": "learner_assignments_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "learner_documents": {
+      "name": "learner_documents",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(180)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "category": {
+          "name": "category",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "documentUrl": {
+          "name": "documentUrl",
+          "type": "varchar(800)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "publishedAt": {
+          "name": "publishedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "learner_documents_learnerId_learners_id_fk": {
+          "name": "learner_documents_learnerId_learners_id_fk",
+          "tableFrom": "learner_documents",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "learner_documents_id": {
+          "name": "learner_documents_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "learner_guardians": {
+      "name": "learner_guardians",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "guardianId": {
+          "name": "guardianId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "isPrimary": {
+          "name": "isPrimary",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        }
+      },
+      "indexes": {
+        "learner_guardian_unique": {
+          "name": "learner_guardian_unique",
+          "columns": [
+            "learnerId",
+            "guardianId"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "learner_guardians_learnerId_learners_id_fk": {
+          "name": "learner_guardians_learnerId_learners_id_fk",
+          "tableFrom": "learner_guardians",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "learner_guardians_guardianId_guardian_contacts_id_fk": {
+          "name": "learner_guardians_guardianId_guardian_contacts_id_fk",
+          "tableFrom": "learner_guardians",
+          "tableTo": "guardian_contacts",
+          "columnsFrom": [
+            "guardianId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "learner_guardians_id": {
+          "name": "learner_guardians_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "learner_report_cards": {
+      "name": "learner_report_cards",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "academicYearId": {
+          "name": "academicYearId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "termId": {
+          "name": "termId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'PUBLISHED'"
+        },
+        "summary": {
+          "name": "summary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "documentUrl": {
+          "name": "documentUrl",
+          "type": "varchar(800)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "publishedAt": {
+          "name": "publishedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "learner_report_cards_learnerId_learners_id_fk": {
+          "name": "learner_report_cards_learnerId_learners_id_fk",
+          "tableFrom": "learner_report_cards",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "learner_report_cards_academicYearId_academic_years_id_fk": {
+          "name": "learner_report_cards_academicYearId_academic_years_id_fk",
+          "tableFrom": "learner_report_cards",
+          "tableTo": "academic_years",
+          "columnsFrom": [
+            "academicYearId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "learner_report_cards_termId_academic_terms_id_fk": {
+          "name": "learner_report_cards_termId_academic_terms_id_fk",
+          "tableFrom": "learner_report_cards",
+          "tableTo": "academic_terms",
+          "columnsFrom": [
+            "termId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "learner_report_cards_id": {
+          "name": "learner_report_cards_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "learner_results": {
+      "name": "learner_results",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "academicYearId": {
+          "name": "academicYearId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "termId": {
+          "name": "termId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "subjectId": {
+          "name": "subjectId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "subjectName": {
+          "name": "subjectName",
+          "type": "varchar(140)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "marks": {
+          "name": "marks",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "grade": {
+          "name": "grade",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "remarks": {
+          "name": "remarks",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "publishedAt": {
+          "name": "publishedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "learner_results_learnerId_learners_id_fk": {
+          "name": "learner_results_learnerId_learners_id_fk",
+          "tableFrom": "learner_results",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "learner_results_academicYearId_academic_years_id_fk": {
+          "name": "learner_results_academicYearId_academic_years_id_fk",
+          "tableFrom": "learner_results",
+          "tableTo": "academic_years",
+          "columnsFrom": [
+            "academicYearId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "learner_results_termId_academic_terms_id_fk": {
+          "name": "learner_results_termId_academic_terms_id_fk",
+          "tableFrom": "learner_results",
+          "tableTo": "academic_terms",
+          "columnsFrom": [
+            "termId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "learner_results_subjectId_subjects_id_fk": {
+          "name": "learner_results_subjectId_subjects_id_fk",
+          "tableFrom": "learner_results",
+          "tableTo": "subjects",
+          "columnsFrom": [
+            "subjectId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "learner_results_id": {
+          "name": "learner_results_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "learners": {
+      "name": "learners",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "studentId": {
+          "name": "studentId",
+          "type": "varchar(60)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "admissionNumber": {
+          "name": "admissionNumber",
+          "type": "varchar(60)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "houseId": {
+          "name": "houseId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "firstName": {
+          "name": "firstName",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "middleName": {
+          "name": "middleName",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "lastName": {
+          "name": "lastName",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "dateOfBirth": {
+          "name": "dateOfBirth",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "gender": {
+          "name": "gender",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "registrationStatus": {
+          "name": "registrationStatus",
+          "type": "enum('ACTIVE','INACTIVE','WITHDRAWN','COMPLETED')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'ACTIVE'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "onUpdate": true,
+          "default": "(now())"
+        }
+      },
+      "indexes": {
+        "learner_student_id_unique": {
+          "name": "learner_student_id_unique",
+          "columns": [
+            "studentId"
+          ],
+          "isUnique": true
+        },
+        "learner_admission_number_unique": {
+          "name": "learner_admission_number_unique",
+          "columns": [
+            "admissionNumber"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "learners_userId_users_id_fk": {
+          "name": "learners_userId_users_id_fk",
+          "tableFrom": "learners",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "learners_houseId_houses_id_fk": {
+          "name": "learners_houseId_houses_id_fk",
+          "tableFrom": "learners",
+          "tableTo": "houses",
+          "columnsFrom": [
+            "houseId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "learners_id": {
+          "name": "learners_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "medical_profiles": {
+      "name": "medical_profiles",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "bloodGroup": {
+          "name": "bloodGroup",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "allergies": {
+          "name": "allergies",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "conditions": {
+          "name": "conditions",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "medications": {
+          "name": "medications",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "emergencyContactName": {
+          "name": "emergencyContactName",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "emergencyContactPhone": {
+          "name": "emergencyContactPhone",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "updatedByUserId": {
+          "name": "updatedByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "onUpdate": true,
+          "default": "(now())"
+        }
+      },
+      "indexes": {
+        "medical_profile_learner_unique": {
+          "name": "medical_profile_learner_unique",
+          "columns": [
+            "learnerId"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "medical_profiles_learnerId_learners_id_fk": {
+          "name": "medical_profiles_learnerId_learners_id_fk",
+          "tableFrom": "medical_profiles",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "medical_profiles_updatedByUserId_users_id_fk": {
+          "name": "medical_profiles_updatedByUserId_users_id_fk",
+          "tableFrom": "medical_profiles",
+          "tableTo": "users",
+          "columnsFrom": [
+            "updatedByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "medical_profiles_id": {
+          "name": "medical_profiles_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "o_level_result_subjects": {
+      "name": "o_level_result_subjects",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "resultId": {
+          "name": "resultId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "subjectId": {
+          "name": "subjectId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "subjectName": {
+          "name": "subjectName",
+          "type": "varchar(140)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "grade": {
+          "name": "grade",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "points": {
+          "name": "points",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "o_level_result_subject_unique": {
+          "name": "o_level_result_subject_unique",
+          "columns": [
+            "resultId",
+            "subjectName"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "o_level_result_subjects_resultId_o_level_results_id_fk": {
+          "name": "o_level_result_subjects_resultId_o_level_results_id_fk",
+          "tableFrom": "o_level_result_subjects",
+          "tableTo": "o_level_results",
+          "columnsFrom": [
+            "resultId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "o_level_result_subjects_subjectId_subjects_id_fk": {
+          "name": "o_level_result_subjects_subjectId_subjects_id_fk",
+          "tableFrom": "o_level_result_subjects",
+          "tableTo": "subjects",
+          "columnsFrom": [
+            "subjectId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "o_level_result_subjects_id": {
+          "name": "o_level_result_subjects_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "o_level_results": {
+      "name": "o_level_results",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "examinationYear": {
+          "name": "examinationYear",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "candidateNumber": {
+          "name": "candidateNumber",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "centreNumber": {
+          "name": "centreNumber",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "candidateName": {
+          "name": "candidateName",
+          "type": "varchar(180)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "verificationStatus": {
+          "name": "verificationStatus",
+          "type": "enum('NOT_STARTED','PENDING','VERIFIED','FAILED')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'PENDING'"
+        },
+        "verifiedByUserId": {
+          "name": "verifiedByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "verifiedAt": {
+          "name": "verifiedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "onUpdate": true,
+          "default": "(now())"
+        }
+      },
+      "indexes": {
+        "learner_o_level_exam_year_unique": {
+          "name": "learner_o_level_exam_year_unique",
+          "columns": [
+            "learnerId",
+            "examinationYear"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "o_level_results_learnerId_learners_id_fk": {
+          "name": "o_level_results_learnerId_learners_id_fk",
+          "tableFrom": "o_level_results",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "o_level_results_verifiedByUserId_users_id_fk": {
+          "name": "o_level_results_verifiedByUserId_users_id_fk",
+          "tableFrom": "o_level_results",
+          "tableTo": "users",
+          "columnsFrom": [
+            "verifiedByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "o_level_results_id": {
+          "name": "o_level_results_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "payment_reconciliations": {
+      "name": "payment_reconciliations",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "paymentId": {
+          "name": "paymentId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "externalReference": {
+          "name": "externalReference",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "reconciliationStatus": {
+          "name": "reconciliationStatus",
+          "type": "enum('UNMATCHED','MATCHED','EXCEPTION','REVERSED')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'UNMATCHED'"
+        },
+        "reconciledAt": {
+          "name": "reconciledAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "reconciledByUserId": {
+          "name": "reconciledByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "exceptionReason": {
+          "name": "exceptionReason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "payment_reconciliations_paymentId_payments_id_fk": {
+          "name": "payment_reconciliations_paymentId_payments_id_fk",
+          "tableFrom": "payment_reconciliations",
+          "tableTo": "payments",
+          "columnsFrom": [
+            "paymentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "payment_reconciliations_reconciledByUserId_users_id_fk": {
+          "name": "payment_reconciliations_reconciledByUserId_users_id_fk",
+          "tableFrom": "payment_reconciliations",
+          "tableTo": "users",
+          "columnsFrom": [
+            "reconciledByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "payment_reconciliations_id": {
+          "name": "payment_reconciliations_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "payments": {
+      "name": "payments",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "receiptNumber": {
+          "name": "receiptNumber",
+          "type": "varchar(60)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "financialAccountId": {
+          "name": "financialAccountId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "invoiceId": {
+          "name": "invoiceId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "amountMinor": {
+          "name": "amountMinor",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "paymentMethod": {
+          "name": "paymentMethod",
+          "type": "enum('CASH','BANK_TRANSFER','ECOCASH','ZIPIT','INNBUCKS','PAYNOW','CARD','OTHER')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reference": {
+          "name": "reference",
+          "type": "varchar(120)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "paymentStatus": {
+          "name": "paymentStatus",
+          "type": "enum('PENDING','CONFIRMED','REVERSED')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'CONFIRMED'"
+        },
+        "paidAt": {
+          "name": "paidAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "receivedByUserId": {
+          "name": "receivedByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {
+        "payment_receipt_number_unique": {
+          "name": "payment_receipt_number_unique",
+          "columns": [
+            "receiptNumber"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "payments_learnerId_learners_id_fk": {
+          "name": "payments_learnerId_learners_id_fk",
+          "tableFrom": "payments",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "payments_financialAccountId_financial_accounts_id_fk": {
+          "name": "payments_financialAccountId_financial_accounts_id_fk",
+          "tableFrom": "payments",
+          "tableTo": "financial_accounts",
+          "columnsFrom": [
+            "financialAccountId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "payments_invoiceId_invoices_id_fk": {
+          "name": "payments_invoiceId_invoices_id_fk",
+          "tableFrom": "payments",
+          "tableTo": "invoices",
+          "columnsFrom": [
+            "invoiceId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "payments_receivedByUserId_users_id_fk": {
+          "name": "payments_receivedByUserId_users_id_fk",
+          "tableFrom": "payments",
+          "tableTo": "users",
+          "columnsFrom": [
+            "receivedByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "payments_id": {
+          "name": "payments_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "paynow_settings": {
+      "name": "paynow_settings",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "integrationId": {
+          "name": "integrationId",
+          "type": "varchar(120)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "integrationKeyEncrypted": {
+          "name": "integrationKeyEncrypted",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "returnUrl": {
+          "name": "returnUrl",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "resultUrl": {
+          "name": "resultUrl",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "isActive": {
+          "name": "isActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "updatedByUserId": {
+          "name": "updatedByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "onUpdate": true,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "paynow_settings_updatedByUserId_users_id_fk": {
+          "name": "paynow_settings_updatedByUserId_users_id_fk",
+          "tableFrom": "paynow_settings",
+          "tableTo": "users",
+          "columnsFrom": [
+            "updatedByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "paynow_settings_id": {
+          "name": "paynow_settings_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "permissions": {
+      "name": "permissions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "code": {
+          "name": "code",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(140)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "permission_code_unique": {
+          "name": "permission_code_unique",
+          "columns": [
+            "code"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "permissions_id": {
+          "name": "permissions_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "prefect_reports": {
+      "name": "prefect_reports",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reportedAt": {
+          "name": "reportedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "category": {
+          "name": "category",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "summary": {
+          "name": "summary",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "disciplineIncidentStatus": {
+          "name": "disciplineIncidentStatus",
+          "type": "enum('OPEN','RESOLVED','REFERRED')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'OPEN'"
+        },
+        "reviewedByUserId": {
+          "name": "reviewedByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "prefect_reports_learnerId_learners_id_fk": {
+          "name": "prefect_reports_learnerId_learners_id_fk",
+          "tableFrom": "prefect_reports",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "prefect_reports_reviewedByUserId_users_id_fk": {
+          "name": "prefect_reports_reviewedByUserId_users_id_fk",
+          "tableFrom": "prefect_reports",
+          "tableTo": "users",
+          "columnsFrom": [
+            "reviewedByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "prefect_reports_id": {
+          "name": "prefect_reports_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "role_permissions": {
+      "name": "role_permissions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "roleId": {
+          "name": "roleId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "permissionId": {
+          "name": "permissionId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "canView": {
+          "name": "canView",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
+        },
+        "canCreate": {
+          "name": "canCreate",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "canEdit": {
+          "name": "canEdit",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "canDelete": {
+          "name": "canDelete",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        }
+      },
+      "indexes": {
+        "role_permission_unique": {
+          "name": "role_permission_unique",
+          "columns": [
+            "roleId",
+            "permissionId"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "role_permissions_roleId_staff_roles_id_fk": {
+          "name": "role_permissions_roleId_staff_roles_id_fk",
+          "tableFrom": "role_permissions",
+          "tableTo": "staff_roles",
+          "columnsFrom": [
+            "roleId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "role_permissions_permissionId_permissions_id_fk": {
+          "name": "role_permissions_permissionId_permissions_id_fk",
+          "tableFrom": "role_permissions",
+          "tableTo": "permissions",
+          "columnsFrom": [
+            "permissionId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "role_permissions_id": {
+          "name": "role_permissions_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "rooms": {
+      "name": "rooms",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "roomType": {
+          "name": "roomType",
+          "type": "enum('CLASSROOM','LABORATORY','OFFICE','LIBRARY','HALL','OTHER')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'CLASSROOM'"
+        },
+        "capacity": {
+          "name": "capacity",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "building": {
+          "name": "building",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "isActive": {
+          "name": "isActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
+        }
+      },
+      "indexes": {
+        "room_name_unique": {
+          "name": "room_name_unique",
+          "columns": [
+            "name"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "rooms_id": {
+          "name": "rooms_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "safeguarding_referrals": {
+      "name": "safeguarding_referrals",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "welfareCaseId": {
+          "name": "welfareCaseId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "referralType": {
+          "name": "referralType",
+          "type": "varchar(120)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "safeguardingReferralStatus": {
+          "name": "safeguardingReferralStatus",
+          "type": "enum('DRAFT','SUBMITTED','IN_REVIEW','ACTIONED','CLOSED')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'DRAFT'"
+        },
+        "details": {
+          "name": "details",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "referredAt": {
+          "name": "referredAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "externalAgency": {
+          "name": "externalAgency",
+          "type": "varchar(180)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "resolvedAt": {
+          "name": "resolvedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdByUserId": {
+          "name": "createdByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "safeguarding_referrals_welfareCaseId_welfare_cases_id_fk": {
+          "name": "safeguarding_referrals_welfareCaseId_welfare_cases_id_fk",
+          "tableFrom": "safeguarding_referrals",
+          "tableTo": "welfare_cases",
+          "columnsFrom": [
+            "welfareCaseId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "safeguarding_referrals_learnerId_learners_id_fk": {
+          "name": "safeguarding_referrals_learnerId_learners_id_fk",
+          "tableFrom": "safeguarding_referrals",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "safeguarding_referrals_createdByUserId_users_id_fk": {
+          "name": "safeguarding_referrals_createdByUserId_users_id_fk",
+          "tableFrom": "safeguarding_referrals",
+          "tableTo": "users",
+          "columnsFrom": [
+            "createdByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "safeguarding_referrals_id": {
+          "name": "safeguarding_referrals_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "sbp_records": {
+      "name": "sbp_records",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "academicYearId": {
+          "name": "academicYearId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(180)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'RECORDED'"
+        },
+        "score": {
+          "name": "score",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "remarks": {
+          "name": "remarks",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "publishedAt": {
+          "name": "publishedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "sbp_records_learnerId_learners_id_fk": {
+          "name": "sbp_records_learnerId_learners_id_fk",
+          "tableFrom": "sbp_records",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "sbp_records_academicYearId_academic_years_id_fk": {
+          "name": "sbp_records_academicYearId_academic_years_id_fk",
+          "tableFrom": "sbp_records",
+          "tableTo": "academic_years",
+          "columnsFrom": [
+            "academicYearId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "sbp_records_id": {
+          "name": "sbp_records_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "scholarships": {
+      "name": "scholarships",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "financialAccountId": {
+          "name": "financialAccountId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "amountMinor": {
+          "name": "amountMinor",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "academicYearId": {
+          "name": "academicYearId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "assistanceStatus": {
+          "name": "assistanceStatus",
+          "type": "enum('PENDING','APPROVED','DECLINED','EXPIRED')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'PENDING'"
+        },
+        "sponsor": {
+          "name": "sponsor",
+          "type": "varchar(160)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "approvedByUserId": {
+          "name": "approvedByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "scholarships_learnerId_learners_id_fk": {
+          "name": "scholarships_learnerId_learners_id_fk",
+          "tableFrom": "scholarships",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "scholarships_financialAccountId_financial_accounts_id_fk": {
+          "name": "scholarships_financialAccountId_financial_accounts_id_fk",
+          "tableFrom": "scholarships",
+          "tableTo": "financial_accounts",
+          "columnsFrom": [
+            "financialAccountId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "scholarships_academicYearId_academic_years_id_fk": {
+          "name": "scholarships_academicYearId_academic_years_id_fk",
+          "tableFrom": "scholarships",
+          "tableTo": "academic_years",
+          "columnsFrom": [
+            "academicYearId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "scholarships_approvedByUserId_users_id_fk": {
+          "name": "scholarships_approvedByUserId_users_id_fk",
+          "tableFrom": "scholarships",
+          "tableTo": "users",
+          "columnsFrom": [
+            "approvedByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "scholarships_id": {
+          "name": "scholarships_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "school_documents": {
+      "name": "school_documents",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "uploadedByUserId": {
+          "name": "uploadedByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(180)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "category": {
+          "name": "category",
+          "type": "enum('SCHOOL_PROFILE','POLICY','ADMINISTRATION','OTHER')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'ADMINISTRATION'"
+        },
+        "storageKey": {
+          "name": "storageKey",
+          "type": "varchar(600)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "storageUrl": {
+          "name": "storageUrl",
+          "type": "varchar(800)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "mimeType": {
+          "name": "mimeType",
+          "type": "varchar(120)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "fileSize": {
+          "name": "fileSize",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "school_documents_uploadedByUserId_users_id_fk": {
+          "name": "school_documents_uploadedByUserId_users_id_fk",
+          "tableFrom": "school_documents",
+          "tableTo": "users",
+          "columnsFrom": [
+            "uploadedByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "school_documents_id": {
+          "name": "school_documents_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "school_events": {
+      "name": "school_events",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "academicYearId": {
+          "name": "academicYearId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "termId": {
+          "name": "termId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "eventType": {
+          "name": "eventType",
+          "type": "enum('ASSEMBLY','EXAMINATION','SCHOOL_EVENT','SPORTS_EVENT','CONSULTATION_DAY','SPEECH_DAY')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "eventVisibility": {
+          "name": "eventVisibility",
+          "type": "enum('HEADTEACHER','STAFF','LEARNERS_GUARDIANS','ALL')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'ALL'"
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(180)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "startAt": {
+          "name": "startAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "endAt": {
+          "name": "endAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "roomId": {
+          "name": "roomId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "isRecurring": {
+          "name": "isRecurring",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "createdByUserId": {
+          "name": "createdByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "school_events_academicYearId_academic_years_id_fk": {
+          "name": "school_events_academicYearId_academic_years_id_fk",
+          "tableFrom": "school_events",
+          "tableTo": "academic_years",
+          "columnsFrom": [
+            "academicYearId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "school_events_termId_academic_terms_id_fk": {
+          "name": "school_events_termId_academic_terms_id_fk",
+          "tableFrom": "school_events",
+          "tableTo": "academic_terms",
+          "columnsFrom": [
+            "termId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "school_events_roomId_rooms_id_fk": {
+          "name": "school_events_roomId_rooms_id_fk",
+          "tableFrom": "school_events",
+          "tableTo": "rooms",
+          "columnsFrom": [
+            "roomId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "school_events_createdByUserId_users_id_fk": {
+          "name": "school_events_createdByUserId_users_id_fk",
+          "tableFrom": "school_events",
+          "tableTo": "users",
+          "columnsFrom": [
+            "createdByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "school_events_id": {
+          "name": "school_events_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "school_notices": {
+      "name": "school_notices",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(180)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "body": {
+          "name": "body",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "noticeAudience": {
+          "name": "noticeAudience",
+          "type": "enum('ALL','LEARNERS','GUARDIANS','STAFF')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'ALL'"
+        },
+        "publishedAt": {
+          "name": "publishedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "expiresAt": {
+          "name": "expiresAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdByUserId": {
+          "name": "createdByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "school_notices_createdByUserId_users_id_fk": {
+          "name": "school_notices_createdByUserId_users_id_fk",
+          "tableFrom": "school_notices",
+          "tableTo": "users",
+          "columnsFrom": [
+            "createdByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "school_notices_id": {
+          "name": "school_notices_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "school_profiles": {
+      "name": "school_profiles",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "schoolName": {
+          "name": "schoolName",
+          "type": "varchar(180)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "motto": {
+          "name": "motto",
+          "type": "varchar(240)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "registrationNumber": {
+          "name": "registrationNumber",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "registrationAuthority": {
+          "name": "registrationAuthority",
+          "type": "varchar(120)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'MoPSE'"
+        },
+        "schoolType": {
+          "name": "schoolType",
+          "type": "enum('secondary')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'secondary'"
+        },
+        "logoKey": {
+          "name": "logoKey",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "logoUrl": {
+          "name": "logoUrl",
+          "type": "varchar(700)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "primaryColour": {
+          "name": "primaryColour",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'#123B5D'"
+        },
+        "accentColour": {
+          "name": "accentColour",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'#C99A3E'"
+        },
+        "addressLine1": {
+          "name": "addressLine1",
+          "type": "varchar(180)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "addressLine2": {
+          "name": "addressLine2",
+          "type": "varchar(180)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "town": {
+          "name": "town",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "province": {
+          "name": "province",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "country": {
+          "name": "country",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'Zimbabwe'"
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "alternativePhone": {
+          "name": "alternativePhone",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(320)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "website": {
+          "name": "website",
+          "type": "varchar(320)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "headteacherName": {
+          "name": "headteacherName",
+          "type": "varchar(180)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "onUpdate": true,
+          "default": "(now())"
+        }
+      },
+      "indexes": {
+        "school_profile_registration_unique": {
+          "name": "school_profile_registration_unique",
+          "columns": [
+            "registrationNumber"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "school_profiles_id": {
+          "name": "school_profiles_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "staff": {
+      "name": "staff",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "staffNumber": {
+          "name": "staffNumber",
+          "type": "varchar(60)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "firstName": {
+          "name": "firstName",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "lastName": {
+          "name": "lastName",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "nationalId": {
+          "name": "nationalId",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(320)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "employmentType": {
+          "name": "employmentType",
+          "type": "enum('PERMANENT','TEMPORARY','RELIEF','VOLUNTEER')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'PERMANENT'"
+        },
+        "status": {
+          "name": "status",
+          "type": "enum('ACTIVE','INACTIVE','ON_LEAVE')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'ACTIVE'"
+        },
+        "joinedOn": {
+          "name": "joinedOn",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "staff_number_unique": {
+          "name": "staff_number_unique",
+          "columns": [
+            "staffNumber"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "staff_userId_users_id_fk": {
+          "name": "staff_userId_users_id_fk",
+          "tableFrom": "staff",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "staff_id": {
+          "name": "staff_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "staff_role_assignments": {
+      "name": "staff_role_assignments",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "staffId": {
+          "name": "staffId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "roleId": {
+          "name": "roleId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "effectiveFrom": {
+          "name": "effectiveFrom",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "effectiveTo": {
+          "name": "effectiveTo",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "staff_role_assignment_unique": {
+          "name": "staff_role_assignment_unique",
+          "columns": [
+            "staffId",
+            "roleId"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "staff_role_assignments_staffId_staff_id_fk": {
+          "name": "staff_role_assignments_staffId_staff_id_fk",
+          "tableFrom": "staff_role_assignments",
+          "tableTo": "staff",
+          "columnsFrom": [
+            "staffId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "staff_role_assignments_roleId_staff_roles_id_fk": {
+          "name": "staff_role_assignments_roleId_staff_roles_id_fk",
+          "tableFrom": "staff_role_assignments",
+          "tableTo": "staff_roles",
+          "columnsFrom": [
+            "roleId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "staff_role_assignments_id": {
+          "name": "staff_role_assignments_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "staff_roles": {
+      "name": "staff_roles",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "code": {
+          "name": "code",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "isSystemRole": {
+          "name": "isSystemRole",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "isActive": {
+          "name": "isActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
+        }
+      },
+      "indexes": {
+        "staff_role_code_unique": {
+          "name": "staff_role_code_unique",
+          "columns": [
+            "code"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "staff_roles_id": {
+          "name": "staff_roles_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "subjects": {
+      "name": "subjects",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(140)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "code": {
+          "name": "code",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "pathway": {
+          "name": "pathway",
+          "type": "enum('O_LEVEL','A_LEVEL')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "departmentId": {
+          "name": "departmentId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "isCore": {
+          "name": "isCore",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "isActive": {
+          "name": "isActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
+        }
+      },
+      "indexes": {
+        "subject_code_unique": {
+          "name": "subject_code_unique",
+          "columns": [
+            "code"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "subjects_departmentId_school_departments_id_fk": {
+          "name": "subjects_departmentId_school_departments_id_fk",
+          "tableFrom": "subjects",
+          "tableTo": "school_departments",
+          "columnsFrom": [
+            "departmentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "subjects_id": {
+          "name": "subjects_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "teacher_assignments": {
+      "name": "teacher_assignments",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "teacherStaffId": {
+          "name": "teacherStaffId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "subjectId": {
+          "name": "subjectId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "classId": {
+          "name": "classId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "academicYearId": {
+          "name": "academicYearId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "termId": {
+          "name": "termId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "isPrimaryTeacher": {
+          "name": "isPrimaryTeacher",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        }
+      },
+      "indexes": {
+        "teacher_subject_class_year_unique": {
+          "name": "teacher_subject_class_year_unique",
+          "columns": [
+            "teacherStaffId",
+            "subjectId",
+            "classId",
+            "academicYearId",
+            "termId"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "teacher_assignments_teacherStaffId_staff_id_fk": {
+          "name": "teacher_assignments_teacherStaffId_staff_id_fk",
+          "tableFrom": "teacher_assignments",
+          "tableTo": "staff",
+          "columnsFrom": [
+            "teacherStaffId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "teacher_assignments_subjectId_subjects_id_fk": {
+          "name": "teacher_assignments_subjectId_subjects_id_fk",
+          "tableFrom": "teacher_assignments",
+          "tableTo": "subjects",
+          "columnsFrom": [
+            "subjectId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "teacher_assignments_classId_classes_id_fk": {
+          "name": "teacher_assignments_classId_classes_id_fk",
+          "tableFrom": "teacher_assignments",
+          "tableTo": "classes",
+          "columnsFrom": [
+            "classId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "teacher_assignments_academicYearId_academic_years_id_fk": {
+          "name": "teacher_assignments_academicYearId_academic_years_id_fk",
+          "tableFrom": "teacher_assignments",
+          "tableTo": "academic_years",
+          "columnsFrom": [
+            "academicYearId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "teacher_assignments_termId_academic_terms_id_fk": {
+          "name": "teacher_assignments_termId_academic_terms_id_fk",
+          "tableFrom": "teacher_assignments",
+          "tableTo": "academic_terms",
+          "columnsFrom": [
+            "termId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "teacher_assignments_id": {
+          "name": "teacher_assignments_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "timetable_entries": {
+      "name": "timetable_entries",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "academicYearId": {
+          "name": "academicYearId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "termId": {
+          "name": "termId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "classId": {
+          "name": "classId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "teacherStaffId": {
+          "name": "teacherStaffId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "subjectId": {
+          "name": "subjectId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "roomId": {
+          "name": "roomId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "dayOfWeek": {
+          "name": "dayOfWeek",
+          "type": "varchar(12)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "startTime": {
+          "name": "startTime",
+          "type": "varchar(5)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "endTime": {
+          "name": "endTime",
+          "type": "varchar(5)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "timetableEntryType": {
+          "name": "timetableEntryType",
+          "type": "enum('LESSON','ASSEMBLY','EXAMINATION','EVENT')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'LESSON'"
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(180)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "isLaboratory": {
+          "name": "isLaboratory",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "isRecurring": {
+          "name": "isRecurring",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdByUserId": {
+          "name": "createdByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {
+        "timetable_slot_index": {
+          "name": "timetable_slot_index",
+          "columns": [
+            "academicYearId",
+            "termId",
+            "dayOfWeek",
+            "startTime",
+            "endTime",
+            "classId",
+            "teacherStaffId",
+            "roomId"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "timetable_entries_academicYearId_academic_years_id_fk": {
+          "name": "timetable_entries_academicYearId_academic_years_id_fk",
+          "tableFrom": "timetable_entries",
+          "tableTo": "academic_years",
+          "columnsFrom": [
+            "academicYearId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "timetable_entries_termId_academic_terms_id_fk": {
+          "name": "timetable_entries_termId_academic_terms_id_fk",
+          "tableFrom": "timetable_entries",
+          "tableTo": "academic_terms",
+          "columnsFrom": [
+            "termId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "timetable_entries_classId_classes_id_fk": {
+          "name": "timetable_entries_classId_classes_id_fk",
+          "tableFrom": "timetable_entries",
+          "tableTo": "classes",
+          "columnsFrom": [
+            "classId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "timetable_entries_teacherStaffId_staff_id_fk": {
+          "name": "timetable_entries_teacherStaffId_staff_id_fk",
+          "tableFrom": "timetable_entries",
+          "tableTo": "staff",
+          "columnsFrom": [
+            "teacherStaffId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "timetable_entries_subjectId_subjects_id_fk": {
+          "name": "timetable_entries_subjectId_subjects_id_fk",
+          "tableFrom": "timetable_entries",
+          "tableTo": "subjects",
+          "columnsFrom": [
+            "subjectId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "timetable_entries_roomId_rooms_id_fk": {
+          "name": "timetable_entries_roomId_rooms_id_fk",
+          "tableFrom": "timetable_entries",
+          "tableTo": "rooms",
+          "columnsFrom": [
+            "roomId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "timetable_entries_createdByUserId_users_id_fk": {
+          "name": "timetable_entries_createdByUserId_users_id_fk",
+          "tableFrom": "timetable_entries",
+          "tableTo": "users",
+          "columnsFrom": [
+            "createdByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "timetable_entries_id": {
+          "name": "timetable_entries_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "users": {
+      "name": "users",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "openId": {
+          "name": "openId",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(320)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "loginMethod": {
+          "name": "loginMethod",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "role": {
+          "name": "role",
+          "type": "enum('user','admin')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'user'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "onUpdate": true,
+          "default": "(now())"
+        },
+        "lastSignedIn": {
+          "name": "lastSignedIn",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "users_id": {
+          "name": "users_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {
+        "users_openId_unique": {
+          "name": "users_openId_unique",
+          "columns": [
+            "openId"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "welfare_cases": {
+      "name": "welfare_cases",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "learnerId": {
+          "name": "learnerId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "category": {
+          "name": "category",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "severity": {
+          "name": "severity",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
+        },
+        "welfareCaseStatus": {
+          "name": "welfareCaseStatus",
+          "type": "enum('OPEN','ON_HOLD','CLOSED')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'OPEN'"
+        },
+        "summary": {
+          "name": "summary",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "privateNotes": {
+          "name": "privateNotes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "assignedToUserId": {
+          "name": "assignedToUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "openedAt": {
+          "name": "openedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "closedAt": {
+          "name": "closedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdByUserId": {
+          "name": "createdByUserId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "welfare_cases_learnerId_learners_id_fk": {
+          "name": "welfare_cases_learnerId_learners_id_fk",
+          "tableFrom": "welfare_cases",
+          "tableTo": "learners",
+          "columnsFrom": [
+            "learnerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "welfare_cases_assignedToUserId_users_id_fk": {
+          "name": "welfare_cases_assignedToUserId_users_id_fk",
+          "tableFrom": "welfare_cases",
+          "tableTo": "users",
+          "columnsFrom": [
+            "assignedToUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "welfare_cases_createdByUserId_users_id_fk": {
+          "name": "welfare_cases_createdByUserId_users_id_fk",
+          "tableFrom": "welfare_cases",
+          "tableTo": "users",
+          "columnsFrom": [
+            "createdByUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "welfare_cases_id": {
+          "name": "welfare_cases_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    }
+  },
+  "views": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "tables": {},
+    "indexes": {}
+  }
+}

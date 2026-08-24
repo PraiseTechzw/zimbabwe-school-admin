@@ -43,6 +43,13 @@
       "when": 1787584821164,
       "tag": "0005_minor_wendigo",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1787585375680,
+      "tag": "0006_adorable_tigra",
+      "breakpoints": true
     }
   ]
 }
