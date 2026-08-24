@@ -1,33 +1,139 @@
-import { useAuth } from "@/_core/hooks/useAuth";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import {
+  ArrowUpRight,
+  BadgeCheck,
+  BookOpenCheck,
+  Building2,
+  CalendarDays,
+  Check,
+  ChevronRight,
+  ClipboardList,
+  FileUp,
+  GraduationCap,
+  House,
+  Landmark,
+  LockKeyhole,
+  MapPin,
+  Palette,
+  PencilLine,
+  Plus,
+  Save,
+  ShieldCheck,
+  Sparkles,
+  Users,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { Streamdown } from 'streamdown';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { trpc } from "@/lib/trpc";
 
-/**
- * All content in this page are only for example, replace with your own feature implementation
- * When building pages, remember your instructions in Frontend Workflow, Frontend Best Practices, Design Guide and Common Pitfalls
- */
-export default function Home() {
-  // The useAuth hook provides authentication state.
-  // To implement login/logout, call logout(), or start login from an event
-  // handler: onClick={() => startLogin()} (imported from "@/const"). Never call
-  // startLogin() during render (no href={startLogin()}) — it mints a one-time
-  // nonce cookie and must run only at the moment of navigation.
-  let { user, loading, error, isAuthenticated, logout } = useAuth();
+const roleColours: Record<string, string> = {
+  HEADTEACHER: "bg-amber-50 text-amber-800 border-amber-200",
+  DEPUTY_HEAD: "bg-blue-50 text-blue-800 border-blue-200",
+  TEACHER: "bg-emerald-50 text-emerald-800 border-emerald-200",
+  HOD: "bg-violet-50 text-violet-800 border-violet-200",
+};
 
-  // If theme is switchable in App.tsx, we can implement theme toggling like this:
-  // const { theme, toggleTheme } = useTheme();
+const defaultProfile = {
+  schoolName: "",
+  motto: null as string | null,
+  registrationNumber: "",
+  registrationAuthority: "MoPSE",
+  schoolType: "secondary" as const,
+  logoKey: null as string | null,
+  logoUrl: null as string | null,
+  primaryColour: "#123B5D",
+  accentColour: "#C99A3E",
+  addressLine1: "",
+  addressLine2: null as string | null,
+  town: "",
+  province: null as string | null,
+  country: "Zimbabwe",
+  phone: null as string | null,
+  alternativePhone: null as string | null,
+  email: null as string | null,
+  website: null as string | null,
+  headteacherName: null as string | null,
+};
 
+function SectionHeading({ eyebrow, title, description, icon: Icon }: { eyebrow: string; title: string; description: string; icon: typeof Building2 }) {
   return (
-    <div className="min-h-screen flex flex-col">
-      <main>
-        {/* Example: lucide-react for icons */}
-        <Loader2 className="animate-spin" />
-        Example Page
-        {/* Example: Streamdown for markdown rendering */}
-        <Streamdown>Any **markdown** content</Streamdown>
-        <Button variant="default">Example Button</Button>
-      </main>
+    <div className="mb-5 flex items-start gap-3">
+      <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"><Icon className="h-4 w-4" /></div>
+      <div><p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary/80">{eyebrow}</p><h2 className="mt-1 text-lg font-semibold tracking-tight text-slate-900">{title}</h2><p className="mt-1 text-sm text-slate-500">{description}</p></div>
     </div>
   );
+}
+
+function StatCard({ label, value, note, icon: Icon, tone }: { label: string; value: string | number; note: string; icon: typeof Users; tone: string }) {
+  return <Card className="border-slate-200/80 bg-white/90 shadow-[0_12px_40px_rgba(15,44,70,0.06)]"><CardContent className="p-5"><div className="flex items-start justify-between"><div><p className="text-xs font-medium text-slate-500">{label}</p><p className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">{value}</p><p className="mt-1 text-xs text-slate-500">{note}</p></div><div className={`flex h-10 w-10 items-center justify-center rounded-2xl ${tone}`}><Icon className="h-5 w-5" /></div></div></CardContent></Card>;
+}
+
+export default function Home() {
+  const { data, isLoading, refetch } = trpc.foundation.overview.useQuery();
+  const { data: capabilities } = trpc.foundation.capabilities.useQuery();
+  const saveProfile = trpc.foundation.saveSchoolProfile.useMutation({ onSuccess: () => { toast.success("School profile saved"); refetch(); }, onError: error => toast.error(error.message) });
+  const uploadLogo = trpc.foundation.uploadLogo.useMutation({ onSuccess: result => { setForm(current => ({ ...current, logoKey: result.key, logoUrl: result.url })); toast.success("Logo uploaded securely"); }, onError: error => toast.error(error.message) });
+  const uploadDocument = trpc.foundation.uploadDocument.useMutation({ onSuccess: () => toast.success("Document uploaded securely") , onError: error => toast.error(error.message) });
+  const quickCreate = trpc.foundation.quickCreate.useMutation({ onSuccess: result => { toast.success(`${result.entity} record created`); refetch(); }, onError: error => toast.error(error.message) });
+  const [form, setForm] = useState(defaultProfile);
+
+  useEffect(() => { if (data?.profile) setForm({ ...defaultProfile, ...data.profile }); }, [data?.profile]);
+
+  const currentYear = data?.academicYears?.find(year => year.isCurrent) ?? data?.academicYears?.[0];
+  const currentTerms = data?.academicTerms?.filter(term => term.academicYearId === currentYear?.id) ?? [];
+  const activeProfile = data?.profile;
+  const readiness = useMemo(() => [
+    Boolean(activeProfile),
+    Boolean(data?.academicYears?.length),
+    Boolean(data?.forms?.length),
+    Boolean(data?.staffRoles?.length),
+    Boolean(data?.permissions?.length),
+  ].filter(Boolean).length, [activeProfile, data]);
+
+  const update = (key: keyof typeof defaultProfile, value: string) => setForm(current => ({ ...current, [key]: value }));
+  const createRecord = (entity: "academicYear" | "house" | "department" | "subject" | "room" | "staff" | "class" | "assignment") => {
+    const allowed = entity === "academicYear" ? capabilities?.calendar : entity === "subject" || entity === "department" ? capabilities?.subjects : entity === "room" ? capabilities?.facilities : entity === "staff" ? capabilities?.staff : entity === "assignment" ? capabilities?.assignments : capabilities?.structure;
+    if (!allowed) { toast.error("Your school role does not allow this setup action"); return; }
+    quickCreate.mutate({ entity });
+  };
+  const handleLogo = async (file?: File) => { if (!file) return; const reader = new FileReader(); reader.onload = () => uploadLogo.mutate({ fileName: file.name, mimeType: file.type, base64Data: String(reader.result) }); reader.readAsDataURL(file); };
+  const handleDocument = async (file?: File) => { if (!file) return; const reader = new FileReader(); reader.onload = () => uploadDocument.mutate({ title: file.name.replace(/\.[^/.]+$/, ""), category: "ADMINISTRATION", fileName: file.name, mimeType: file.type || "application/octet-stream", base64Data: String(reader.result) }); reader.readAsDataURL(file); };
+
+  if (isLoading) return <div className="flex min-h-[70vh] items-center justify-center text-sm text-slate-500">Loading school foundation…</div>;
+
+  return <div className="min-h-screen bg-[#f6f8fb] text-slate-900">
+    <div className="relative overflow-hidden border-b border-slate-200/70 bg-[#0f3049] px-5 py-8 text-white sm:px-8 lg:px-10">
+      <div className="absolute -right-10 -top-24 h-72 w-72 rounded-full bg-[#d6a94b]/15 blur-3xl" /><div className="absolute bottom-0 left-1/3 h-32 w-32 rounded-full bg-blue-300/10 blur-2xl" />
+      <div className="relative mx-auto max-w-7xl"><div className="flex flex-col justify-between gap-7 lg:flex-row lg:items-end"><div><div className="mb-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-[#e4c477]"><Sparkles className="h-4 w-4" /> Stage 1 · School foundation</div><h1 className="max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl">A considered foundation for confident school administration.</h1><p className="mt-3 max-w-2xl text-sm leading-6 text-blue-100/80">Set up the school identity, academic structure, people, spaces and permissions that every later operation will depend on.</p></div><div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/10 p-3 backdrop-blur"><div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#d6a94b] text-[#0f3049]"><Landmark className="h-5 w-5" /></div><div><p className="text-xs text-blue-100/70">Configuration readiness</p><p className="text-lg font-semibold">{readiness}/5 foundations ready</p></div></div></div></div>
+    </div>
+
+    <main className="mx-auto max-w-7xl space-y-8 px-5 py-8 sm:px-8 lg:px-10">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"><StatCard label="Academic year" value={currentYear?.name ?? "—"} note={currentYear ? "Current school year" : "Add an academic year"} icon={CalendarDays} tone="bg-blue-50 text-blue-700" /><StatCard label="Forms configured" value={data?.forms?.length ?? 0} note="Forms 1–6 pathways" icon={GraduationCap} tone="bg-amber-50 text-amber-700" /><StatCard label="Staff roles" value={data?.staffRoles?.length ?? 0} note="Configurable access roles" icon={ShieldCheck} tone="bg-violet-50 text-violet-700" /><StatCard label="Staff records" value={data?.staff?.length ?? 0} note="Ready for assignments" icon={Users} tone="bg-emerald-50 text-emerald-700" /></div>
+
+      <Tabs defaultValue="profile" className="space-y-7">
+        <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto rounded-2xl border border-slate-200 bg-white p-1.5 shadow-sm"><TabsTrigger value="profile" className="rounded-xl px-4 py-2.5">School profile</TabsTrigger><TabsTrigger value="academic" className="rounded-xl px-4 py-2.5">Academic structure</TabsTrigger><TabsTrigger value="people" className="rounded-xl px-4 py-2.5">People & access</TabsTrigger><TabsTrigger value="operations" className="rounded-xl px-4 py-2.5">Operations</TabsTrigger></TabsList>
+
+        <TabsContent value="profile" id="school-profile" className="space-y-7">
+          <section><SectionHeading eyebrow="Identity & compliance" title="School profile" description="Capture the official identity that appears across school records and communication." icon={Landmark} /><div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]"><Card className="border-slate-200/80 shadow-sm"><CardHeader><CardTitle className="text-base">Official school details</CardTitle><CardDescription>Secondary-school registration and contact information.</CardDescription></CardHeader><CardContent className="grid gap-4 sm:grid-cols-2"><div className="sm:col-span-2"><Label>School name</Label><Input className="mt-1.5" value={form.schoolName} onChange={e => update("schoolName", e.target.value)} placeholder="e.g. Mufakose High School" /></div><div><Label>MoPSE registration number</Label><Input className="mt-1.5" value={form.registrationNumber} onChange={e => update("registrationNumber", e.target.value)} placeholder="Registration reference" /></div><div><Label>Registration authority</Label><Input className="mt-1.5 bg-slate-50" value={form.registrationAuthority} readOnly /></div><div className="sm:col-span-2"><Label>School motto</Label><Input className="mt-1.5" value={form.motto ?? ""} onChange={e => update("motto", e.target.value)} placeholder="A short line that reflects the school" /></div><div className="sm:col-span-2"><Label>Address line 1</Label><Input className="mt-1.5" value={form.addressLine1} onChange={e => update("addressLine1", e.target.value)} placeholder="Street, stand or postal address" /></div><div><Label>Town / city</Label><Input className="mt-1.5" value={form.town} onChange={e => update("town", e.target.value)} placeholder="Town or city" /></div><div><Label>Province</Label><Input className="mt-1.5" value={form.province ?? ""} onChange={e => update("province", e.target.value)} placeholder="Province" /></div><div><Label>School phone</Label><Input className="mt-1.5" value={form.phone ?? ""} onChange={e => update("phone", e.target.value)} placeholder="Main contact number" /></div><div><Label>School email</Label><Input className="mt-1.5" value={form.email ?? ""} onChange={e => update("email", e.target.value)} placeholder="office@school.co.zw" /></div><div className="sm:col-span-2"><Label>Headteacher</Label><Input className="mt-1.5" value={form.headteacherName ?? ""} onChange={e => update("headteacherName", e.target.value)} placeholder="Headteacher name" /></div><div className="sm:col-span-2 flex justify-end pt-2"><Button onClick={() => saveProfile.mutate(form)} disabled={saveProfile.isPending || capabilities?.profile === false} className="gap-2 bg-[#0f3049] hover:bg-[#173f5d]"><Save className="h-4 w-4" />{saveProfile.isPending ? "Saving…" : "Save school profile"}</Button></div></CardContent></Card>
+            <Card className="overflow-hidden border-slate-200/80 shadow-sm"><div className="bg-[#f0f4f7] p-6"><div className="flex items-center justify-between"><div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Brand presence</p><h3 className="mt-1 text-base font-semibold">School logo & colours</h3></div><Palette className="h-5 w-5 text-[#c99a3e]" /></div><div className="mt-6 flex h-40 items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white shadow-inner">{form.logoUrl ? <img src={form.logoUrl} alt="School logo" className="max-h-28 max-w-[80%] object-contain" /> : <div className="text-center"><div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0f3049] text-white"><Landmark className="h-6 w-6" /></div><p className="mt-3 text-sm font-medium text-slate-700">Upload a school logo</p><p className="mt-1 text-xs text-slate-500">PNG, JPG or SVG · up to 5 MB</p></div>}</div><label className="mt-4 flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-primary hover:text-primary"><FileUp className="h-4 w-4" />{uploadLogo.isPending ? "Uploading securely…" : "Choose logo"}<input type="file" accept="image/*" className="hidden" onChange={e => { if (capabilities?.profile !== false) handleLogo(e.target.files?.[0]); }} /></label></div><CardContent className="space-y-4 p-6"><div className="grid grid-cols-2 gap-3"><div><Label className="text-xs">Primary colour</Label><div className="mt-1.5 flex gap-2"><Input type="color" className="h-10 w-14 p-1" value={form.primaryColour} onChange={e => update("primaryColour", e.target.value)} /><Input value={form.primaryColour} onChange={e => update("primaryColour", e.target.value)} /></div></div><div><Label className="text-xs">Accent colour</Label><div className="mt-1.5 flex gap-2"><Input type="color" className="h-10 w-14 p-1" value={form.accentColour} onChange={e => update("accentColour", e.target.value)} /><Input value={form.accentColour} onChange={e => update("accentColour", e.target.value)} /></div></div></div><div className="rounded-xl border border-emerald-100 bg-emerald-50/60 p-3 text-xs leading-5 text-emerald-800"><div className="flex gap-2"><LockKeyhole className="mt-0.5 h-4 w-4 shrink-0" /><span>Logo files are stored outside the database in secure object storage. The database retains only the storage reference.</span></div></div></CardContent></Card></div></section>
+        </TabsContent>
+
+        <TabsContent value="academic" id="academic-calendar" className="space-y-7">
+          <section><SectionHeading eyebrow="Teaching structure" title="Academic calendar & structure" description="The school year is organised into three terms, with Forms 1–4 on O-Level and Forms 5–6 on A-Level." icon={CalendarDays} /><div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]"><Card className="border-slate-200/80 shadow-sm"><CardHeader className="flex-row items-center justify-between"><div><CardTitle className="text-base">Three-term academic calendar</CardTitle><CardDescription>{currentYear ? `Current year · ${currentYear.name}` : "No current academic year selected"}</CardDescription></div><Button size="sm" variant="outline" className="gap-1.5" onClick={() => createRecord("academicYear")} disabled={quickCreate.isPending || capabilities?.calendar === false}><Plus className="h-4 w-4" />Add year</Button></CardHeader><CardContent className="space-y-3">{currentTerms.length ? currentTerms.map(term => <div key={term.id} className={`flex items-center justify-between rounded-2xl border p-4 ${term.isCurrent ? "border-[#c99a3e]/40 bg-[#fffaf0]" : "border-slate-200 bg-slate-50/50"}`}><div className="flex items-center gap-3"><div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-sm font-semibold text-[#0f3049] shadow-sm">{term.termNumber}</div><div><p className="text-sm font-semibold">{term.name}</p><p className="mt-1 text-xs text-slate-500">{new Date(term.startDate).toLocaleDateString()} — {new Date(term.endDate).toLocaleDateString()}</p></div></div>{term.isCurrent ? <Badge className="border-[#e5c878] bg-[#fff4cf] text-[#86651d]">Current term</Badge> : <Badge variant="outline">Planned</Badge>}</div>) : <div className="rounded-2xl border border-dashed p-8 text-center text-sm text-slate-500">Add an academic year to configure Term 1, Term 2 and Term 3.</div>}</CardContent></Card><Card className="border-slate-200/80 shadow-sm"><CardHeader><CardTitle className="text-base">Forms & pathways</CardTitle><CardDescription>Zimbabwean secondary-school progression.</CardDescription></CardHeader><CardContent className="space-y-2">{(data?.forms ?? []).map(formRow => <div key={formRow.id} className="flex items-center justify-between rounded-xl border border-slate-200 p-3"><div className="flex items-center gap-3"><div className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold ${formRow.pathway === "O_LEVEL" ? "bg-blue-50 text-blue-700" : "bg-amber-50 text-amber-700"}`}>{formRow.formNumber}</div><div><p className="text-sm font-medium">{formRow.label}</p><p className="text-xs text-slate-500">{formRow.pathway === "O_LEVEL" ? "O-Level pathway" : "A-Level pathway"}</p></div></div><Badge variant="outline" className="text-[10px]">Active</Badge></div>)}</CardContent></Card></div></section>
+          <section id="academic-structure"><SectionHeading eyebrow="Cohorts & pastoral structure" title="Classes, streams & houses" description="Keep teaching groups and house structures explicit for later attendance and learner records." icon={House} /><div className="grid gap-6 lg:grid-cols-3"><Card className="border-slate-200/80 shadow-sm lg:col-span-2"><CardHeader><CardTitle className="text-base">Classes & streams</CardTitle><CardDescription>Day Scholar, Boarding or Mixed attendance status.</CardDescription></CardHeader><CardContent><div className="grid gap-3 sm:grid-cols-2">{(data?.classes ?? []).length ? data?.classes.map(classRow => <div key={classRow.id} className="rounded-2xl border border-slate-200 p-4"><div className="flex items-start justify-between"><div><p className="font-semibold">{classRow.name}</p><p className="mt-1 text-xs text-slate-500">{classRow.streamName ?? "General stream"}</p></div><Badge variant="outline" className="text-[10px]">{classRow.attendanceMode.replace("_", " ")}</Badge></div></div>) : <div className="sm:col-span-2 rounded-2xl border border-dashed p-8 text-center text-sm text-slate-500">Classes and streams will appear here once configured.</div>}</div></CardContent></Card><Card className="border-slate-200/80 shadow-sm"><CardHeader><CardTitle className="text-base">School houses</CardTitle><CardDescription>Pastoral and boarding groupings.</CardDescription></CardHeader><CardContent className="space-y-3">{(data?.houses ?? []).length ? data?.houses.map(house => <div key={house.id} className="flex items-center gap-3 rounded-xl border border-slate-200 p-3"><div className="h-3 w-3 rounded-full" style={{ backgroundColor: house.colour ?? "#c99a3e" }} /><span className="text-sm font-medium">{house.name}</span></div>) : <div className="rounded-xl border border-dashed p-5 text-center text-sm text-slate-500">No houses added yet.</div>}</CardContent></Card></div></section>
+        </TabsContent>
+
+        <TabsContent value="people" id="staff" className="space-y-7"><section><SectionHeading eyebrow="People & governance" title="Staff roles and permissions" description="Use configurable school roles to keep access aligned with responsibility." icon={ShieldCheck} /><div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]"><Card className="border-slate-200/80 shadow-sm"><CardHeader><CardTitle className="text-base">Configured school roles</CardTitle><CardDescription>System roles can be extended with other school responsibilities.</CardDescription></CardHeader><CardContent className="space-y-2">{(data?.staffRoles ?? []).map(role => <div key={role.id} className="flex items-center justify-between rounded-xl border border-slate-200 px-3.5 py-3"><div className="flex items-center gap-3"><div className={`flex h-8 w-8 items-center justify-center rounded-lg ${roleColours[role.code] ?? "bg-slate-100 text-slate-700"}`}><ShieldCheck className="h-4 w-4" /></div><div><p className="text-sm font-medium">{role.name}</p><p className="text-xs text-slate-500">{role.description}</p></div></div><ChevronRight className="h-4 w-4 text-slate-300" /></div>)}</CardContent></Card><Card id="permissions" className="border-slate-200/80 shadow-sm"><CardHeader><CardTitle className="text-base">Permission catalogue</CardTitle><CardDescription>Granular controls across the administration foundation.</CardDescription></CardHeader><CardContent className="grid gap-2 sm:grid-cols-2">{(data?.permissions ?? []).map(permission => <div key={permission.id} className="rounded-xl border border-slate-200 p-3"><div className="flex items-start gap-2"><div className="mt-0.5 flex h-6 w-6 items-center justify-center rounded-md bg-emerald-50 text-emerald-700"><Check className="h-3.5 w-3.5" /></div><div><p className="text-sm font-medium">{permission.name}</p><p className="mt-1 text-xs leading-5 text-slate-500">{permission.description}</p></div></div></div>)}</CardContent></Card></div></section><section><SectionHeading eyebrow="Staff directory" title="Staff records" description="Your staff directory becomes the source for roles, departments and teaching assignments." icon={Users} /><Card className="border-slate-200/80 shadow-sm"><CardContent className="p-0">{(data?.staff ?? []).length ? <div className="divide-y divide-slate-100">{data?.staff.map(member => <div key={member.id} className="flex items-center justify-between p-4"><div className="flex items-center gap-3"><div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#e8f0f5] text-sm font-semibold text-[#0f3049]">{member.firstName[0]}{member.lastName[0]}</div><div><p className="text-sm font-semibold">{member.firstName} {member.lastName}</p><p className="text-xs text-slate-500">{member.staffNumber} · {member.status.replace("_", " ")}</p></div></div><Badge variant="outline">{member.employmentType}</Badge></div>)}</div> : <div className="p-10 text-center"><Users className="mx-auto h-8 w-8 text-slate-300" /><p className="mt-3 text-sm font-medium text-slate-700">No staff records yet</p><p className="mt-1 text-sm text-slate-500">Add the school team before creating teaching assignments.</p><Button variant="outline" className="mt-4 gap-2" onClick={() => createRecord("staff")} disabled={quickCreate.isPending || capabilities?.staff === false}><Plus className="h-4 w-4" />Add staff member</Button></div>}</CardContent></Card></section></TabsContent>
+
+        <TabsContent value="operations" className="space-y-7"><section id="subjects"><SectionHeading eyebrow="Teaching resources" title="Subjects & school departments" description="Subjects are connected to departments and pathways to preserve clear academic ownership." icon={BookOpenCheck} /><div className="grid gap-6 lg:grid-cols-2"><Card className="border-slate-200/80 shadow-sm"><CardHeader className="flex-row items-center justify-between"><div><CardTitle className="text-base">Subjects</CardTitle><CardDescription>{data?.subjects?.length ?? 0} configured subjects</CardDescription></div><Button size="sm" variant="outline" className="gap-1.5" onClick={() => createRecord("subject")} disabled={quickCreate.isPending || capabilities?.subjects === false}><Plus className="h-4 w-4" />Add subject</Button></CardHeader><CardContent className="grid gap-2 sm:grid-cols-2">{(data?.subjects ?? []).length ? data?.subjects.map(subject => <div key={subject.id} className="rounded-xl border border-slate-200 p-3"><div className="flex items-start justify-between gap-2"><p className="text-sm font-medium">{subject.name}</p>{subject.isCore && <Badge className="bg-[#fff4cf] text-[#86651d]">Core</Badge>}</div><p className="mt-1 text-xs text-slate-500">{subject.code} · {subject.pathway?.replace("_", "-") ?? "All pathways"}</p></div>) : <div className="sm:col-span-2 rounded-xl border border-dashed p-8 text-center text-sm text-slate-500">Create subjects such as Mathematics, English, Biology or History.</div>}</CardContent></Card><Card className="border-slate-200/80 shadow-sm"><CardHeader><CardTitle className="text-base">School departments</CardTitle><CardDescription>Academic ownership and HOD structure.</CardDescription></CardHeader><CardContent className="space-y-2">{(data?.departments ?? []).length ? data?.departments.map(department => <div key={department.id} className="flex items-center justify-between rounded-xl border border-slate-200 p-3"><div><p className="text-sm font-medium">{department.name}</p><p className="mt-1 text-xs text-slate-500">{department.code}</p></div><PencilLine className="h-4 w-4 text-slate-300" /></div>) : <div className="rounded-xl border border-dashed p-8 text-center text-sm text-slate-500">No school departments added yet.</div>}</CardContent></Card></div></section><section id="facilities"><SectionHeading eyebrow="School estate" title="Rooms & laboratories" description="Maintain the spaces used for classes, practical work and school operations." icon={Building2} /><Card className="border-slate-200/80 shadow-sm"><CardContent className="grid gap-3 p-5 sm:grid-cols-2 lg:grid-cols-4">{(data?.rooms ?? []).length ? data?.rooms.map(room => <div key={room.id} className="rounded-2xl border border-slate-200 p-4"><div className="flex items-center justify-between"><div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-700"><Building2 className="h-4 w-4" /></div><Badge variant="outline" className="text-[10px]">{room.roomType.replace("_", " ")}</Badge></div><p className="mt-4 text-sm font-semibold">{room.name}</p><p className="mt-1 text-xs text-slate-500">{room.capacity ? `${room.capacity} places` : "Capacity not set"}</p></div>) : <div className="sm:col-span-2 lg:col-span-4 rounded-2xl border border-dashed p-10 text-center text-sm text-slate-500">Add classrooms, laboratories, offices and other school spaces.</div>}</CardContent></Card></section><section id="assignments"><SectionHeading eyebrow="Teaching allocation" title="Teacher-subject-class assignments" description="Assignments connect a teacher, subject, class/stream and academic year with database-level references." icon={ClipboardList} /><Card className="border-slate-200/80 shadow-sm"><CardContent className="flex flex-col items-start justify-between gap-4 p-6 sm:flex-row sm:items-center"><div><p className="font-semibold">{data?.teacherAssignments?.length ?? 0} assignments recorded</p><p className="mt-1 text-sm text-slate-500">This is the foundation for later attendance, assessment and class operations.</p></div><Button className="gap-2 bg-[#0f3049] hover:bg-[#173f5d]" onClick={() => createRecord("assignment")} disabled={quickCreate.isPending || capabilities?.assignments === false}><Plus className="h-4 w-4" />Create assignment</Button></CardContent></Card></section><section><SectionHeading eyebrow="Secure records" title="Administrative documents" description="Upload policies and future school records without placing file data in the database." icon={FileUp} /><Card className="border-slate-200/80 shadow-sm"><CardContent className="flex flex-col items-center justify-between gap-5 p-6 sm:flex-row"><div className="flex items-center gap-3"><div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-slate-700"><FileUp className="h-5 w-5" /></div><div><p className="text-sm font-semibold">Secure document storage</p><p className="mt-1 text-xs text-slate-500">PDF, DOCX, XLSX and other administrative files up to 10 MB.</p></div></div><label className="flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-primary hover:text-primary"><FileUp className="h-4 w-4" />Upload document<input type="file" className="hidden" onChange={e => { if (capabilities?.documents !== false) handleDocument(e.target.files?.[0]); }} /></label></CardContent></Card></section></TabsContent>
+      </Tabs>
+    </main>
+  </div>;
 }

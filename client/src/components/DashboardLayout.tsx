@@ -21,15 +21,22 @@ import {
 } from "@/components/ui/sidebar";
 import { startLogin } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, LogOut, PanelLeft, Users } from "lucide-react";
+import { BookOpenCheck, Building2, CalendarDays, ClipboardList, GraduationCap, LayoutDashboard, LogOut, PanelLeft, ShieldCheck, Users } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "Page 1", path: "/" },
-  { icon: Users, label: "Page 2", path: "/some-path" },
+  { icon: LayoutDashboard, label: "Foundation overview", path: "/" },
+  { icon: Building2, label: "School profile", path: "/#school-profile" },
+  { icon: CalendarDays, label: "Academic calendar", path: "/#academic-calendar" },
+  { icon: GraduationCap, label: "Forms & classes", path: "/#academic-structure" },
+  { icon: BookOpenCheck, label: "Subjects & departments", path: "/#subjects" },
+  { icon: Building2, label: "Rooms & laboratories", path: "/#facilities" },
+  { icon: Users, label: "Staff & roles", path: "/#staff" },
+  { icon: ShieldCheck, label: "Permissions", path: "/#permissions" },
+  { icon: ClipboardList, label: "Teacher assignments", path: "/#assignments" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
@@ -169,7 +176,7 @@ function DashboardLayoutContent({
               {!isCollapsed ? (
                 <div className="flex items-center gap-2 min-w-0">
                   <span className="font-semibold tracking-tight truncate">
-                    Navigation
+                    School administration
                   </span>
                 </div>
               ) : null}
@@ -248,7 +255,7 @@ function DashboardLayoutContent({
               <div className="flex items-center gap-3">
                 <div className="flex flex-col gap-1">
                   <span className="tracking-tight text-foreground">
-                    {activeMenuItem?.label ?? "Menu"}
+                    {activeMenuItem?.label ?? "School administration"}
                   </span>
                 </div>
               </div>
