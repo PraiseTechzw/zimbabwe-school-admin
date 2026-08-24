@@ -7,6 +7,7 @@ import DashboardLayout from "./components/DashboardLayout";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import AcademicHistory from "./pages/AcademicHistory";
+import Welfare from "./pages/Welfare";
 
 function Router() {
   return (
@@ -17,6 +18,7 @@ function Router() {
         </DashboardLayout>
       </Route>
       <Route path="/academic"><DashboardLayout><AcademicHistory /></DashboardLayout></Route>
+      <Route path="/welfare"><DashboardLayout><Welfare /></DashboardLayout></Route>
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

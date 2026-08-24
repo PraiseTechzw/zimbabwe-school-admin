@@ -198,6 +198,19 @@ export const applicationStatuses = mysqlEnum("applicationStatus", ["NOT_STARTED"
 export const verificationStatuses = mysqlEnum("verificationStatus", ["NOT_STARTED", "PENDING", "VERIFIED", "FAILED"]);
 const decisionStatusValues = ["PENDING", "SELECTED", "NOT_SELECTED", "ADMITTED", "NOT_ADMITTED"] as const;
 export const progressionTypes = mysqlEnum("progressionType", ["NORMAL_SECONDARY", "A_LEVEL_ADMISSION", "A_LEVEL_CONTINUATION"]);
+export const feeFrequencies = mysqlEnum("feeFrequency", ["ONCE", "TERM", "ANNUAL"]);
+export const invoiceStatuses = mysqlEnum("invoiceStatus", ["DRAFT", "ISSUED", "PARTIALLY_PAID", "PAID", "VOID", "OVERDUE"]);
+export const paymentMethods = mysqlEnum("paymentMethod", ["CASH", "ECOCASH", "ZIPIT", "BANK_TRANSFER", "CARD", "OTHER"]);
+export const paymentStatuses = mysqlEnum("paymentStatus", ["PENDING", "CONFIRMED", "REVERSED"]);
+export const attendanceModes = mysqlEnum("attendanceMode", ["DAILY", "PERIOD", "BOARDING_ROLL_CALL"]);
+export const attendanceStatuses = mysqlEnum("attendanceStatus", ["PRESENT", "ABSENT", "LATE", "EXCUSED"]);
+export const disciplineIncidentStatuses = mysqlEnum("disciplineIncidentStatus", ["OPEN", "RESOLVED", "REFERRED"]);
+export const disciplineActionTypes = mysqlEnum("disciplineActionType", ["NONE", "DEMERIT", "DETENTION", "SUSPENSION"]);
+export const welfareCaseStatuses = mysqlEnum("welfareCaseStatus", ["OPEN", "ON_HOLD", "CLOSED"]);
+export const safeguardingReferralStatuses = mysqlEnum("safeguardingReferralStatus", ["DRAFT", "SUBMITTED", "IN_REVIEW", "ACTIONED", "CLOSED"]);
+export const exeatStatuses = mysqlEnum("exeatStatus", ["REQUESTED", "APPROVED", "DECLINED", "RETURNED", "CANCELLED"]);
+export const guardianAlertTypes = mysqlEnum("guardianAlertType", ["ABSENCE", "LATE_ARRIVAL", "WELFARE"]);
+export const guardianAlertStatuses = mysqlEnum("guardianAlertStatus", ["QUEUED", "SENT", "FAILED"]);
 
 export const learners = mysqlTable("learners", {
   id: int("id").autoincrement().primaryKey(),
@@ -316,6 +329,74 @@ export const aLevelApplicationSubjects = mysqlTable("a_level_application_subject
   subjectName: varchar("subjectName", { length: 140 }).notNull(),
 }, (table) => ({ applicationSubjectUnique: uniqueIndex("a_level_application_subject_unique").on(table.applicationId, table.subjectId) }));
 
+export const feeStructures = mysqlTable("fee_structures", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 160 }).notNull(),
+  academicYearId: int("academicYearId").notNull().references(() => academicYears.id),
+  formId: int("formId").references(() => forms.id),
+  pathway: pathways,
+  currency: varchar("currency", { length: 3 }).default("USD").notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdByUserId: int("createdByUserId").notNull().references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const feeStructureItems = mysqlTable("fee_structure_items", {
+  id: int("id").autoincrement().primaryKey(),
+  feeStructureId: int("feeStructureId").notNull().references(() => feeStructures.id),
+  code: varchar("code", { length: 40 }).notNull(),
+  name: varchar("name", { length: 160 }).notNull(),
+  description: text("description"),
+  amountMinor: int("amountMinor").notNull(),
+  frequency: feeFrequencies.default("TERM").notNull(),
+  isMandatory: boolean("isMandatory").default(true).notNull(),
+}, (table) => ({ feeItemCodeUnique: uniqueIndex("fee_structure_item_code_unique").on(table.feeStructureId, table.code) }));
+
+export const invoices = mysqlTable("invoices", {
+  id: int("id").autoincrement().primaryKey(),
+  invoiceNumber: varchar("invoiceNumber", { length: 60 }).notNull(),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  academicYearId: int("academicYearId").notNull().references(() => academicYears.id),
+  feeStructureId: int("feeStructureId").references(() => feeStructures.id),
+  currency: varchar("currency", { length: 3 }).notNull(),
+  subtotalMinor: int("subtotalMinor").notNull(),
+  discountMinor: int("discountMinor").default(0).notNull(),
+  totalMinor: int("totalMinor").notNull(),
+  status: invoiceStatuses.default("DRAFT").notNull(),
+  issuedAt: timestamp("issuedAt"),
+  dueDate: timestamp("dueDate"),
+  notes: text("notes"),
+  createdByUserId: int("createdByUserId").notNull().references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({ invoiceNumberUnique: uniqueIndex("invoice_number_unique").on(table.invoiceNumber) }));
+
+export const invoiceLines = mysqlTable("invoice_lines", {
+  id: int("id").autoincrement().primaryKey(),
+  invoiceId: int("invoiceId").notNull().references(() => invoices.id),
+  feeItemId: int("feeItemId").references(() => feeStructureItems.id),
+  description: varchar("description", { length: 180 }).notNull(),
+  quantity: int("quantity").default(1).notNull(),
+  unitAmountMinor: int("unitAmountMinor").notNull(),
+  lineTotalMinor: int("lineTotalMinor").notNull(),
+});
+
+export const payments = mysqlTable("payments", {
+  id: int("id").autoincrement().primaryKey(),
+  receiptNumber: varchar("receiptNumber", { length: 60 }).notNull(),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  invoiceId: int("invoiceId").references(() => invoices.id),
+  amountMinor: int("amountMinor").notNull(),
+  currency: varchar("currency", { length: 3 }).notNull(),
+  method: paymentMethods.notNull(),
+  reference: varchar("reference", { length: 120 }),
+  status: paymentStatuses.default("CONFIRMED").notNull(),
+  paidAt: timestamp("paidAt").defaultNow().notNull(),
+  receivedByUserId: int("receivedByUserId").notNull().references(() => users.id),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({ receiptNumberUnique: uniqueIndex("payment_receipt_number_unique").on(table.receiptNumber) }));
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type SchoolProfile = typeof schoolProfiles.$inferSelect;
@@ -337,3 +418,164 @@ export type LearnerAcademicHistory = typeof learnerAcademicHistory.$inferSelect;
 export type OLevelResult = typeof oLevelResults.$inferSelect;
 export type ALevelRequirement = typeof aLevelRequirements.$inferSelect;
 export type ALevelApplication = typeof aLevelApplications.$inferSelect;
+export type FeeStructure = typeof feeStructures.$inferSelect;
+export type FeeStructureItem = typeof feeStructureItems.$inferSelect;
+export type Invoice = typeof invoices.$inferSelect;
+export type InvoiceLine = typeof invoiceLines.$inferSelect;
+export type Payment = typeof payments.$inferSelect;
+
+export const attendanceSessions = mysqlTable("attendance_sessions", {
+  id: int("id").autoincrement().primaryKey(),
+  academicYearId: int("academicYearId").notNull().references(() => academicYears.id),
+  termId: int("termId").notNull().references(() => academicTerms.id),
+  classId: int("classId").references(() => classes.id),
+  sessionDate: timestamp("sessionDate").notNull(),
+  mode: attendanceModes.notNull(),
+  periodNumber: int("periodNumber"),
+  periodName: varchar("periodName", { length: 80 }),
+  recordedByUserId: int("recordedByUserId").notNull().references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const attendanceRecords = mysqlTable("attendance_records", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: int("sessionId").notNull().references(() => attendanceSessions.id),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  status: attendanceStatuses.notNull(),
+  arrivalTime: timestamp("arrivalTime"),
+  reason: varchar("reason", { length: 500 }),
+  note: text("note"),
+  guardianAlerted: boolean("guardianAlerted").default(false).notNull(),
+  alertSentAt: timestamp("alertSentAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({ attendanceSessionLearnerUnique: uniqueIndex("attendance_session_learner_unique").on(table.sessionId, table.learnerId) }));
+
+export const disciplineIncidents = mysqlTable("discipline_incidents", {
+  id: int("id").autoincrement().primaryKey(),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  occurredAt: timestamp("occurredAt").notNull(),
+  category: varchar("category", { length: 100 }).notNull(),
+  severity: int("severity").default(1).notNull(),
+  summary: varchar("summary", { length: 500 }).notNull(),
+  details: text("details"),
+  status: disciplineIncidentStatuses.default("OPEN").notNull(),
+  reportedByUserId: int("reportedByUserId").notNull().references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const disciplineActions = mysqlTable("discipline_actions", {
+  id: int("id").autoincrement().primaryKey(),
+  incidentId: int("incidentId").notNull().references(() => disciplineIncidents.id),
+  actionType: disciplineActionTypes.notNull(),
+  points: int("points"),
+  startAt: timestamp("startAt"),
+  endAt: timestamp("endAt"),
+  completedAt: timestamp("completedAt"),
+  notes: text("notes"),
+  createdByUserId: int("createdByUserId").notNull().references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const prefectReports = mysqlTable("prefect_reports", {
+  id: int("id").autoincrement().primaryKey(),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  reportedAt: timestamp("reportedAt").defaultNow().notNull(),
+  category: varchar("category", { length: 100 }).notNull(),
+  summary: varchar("summary", { length: 500 }).notNull(),
+  status: disciplineIncidentStatuses.default("OPEN").notNull(),
+  reviewedByUserId: int("reviewedByUserId").references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const counsellingRecords = mysqlTable("counselling_records", {
+  id: int("id").autoincrement().primaryKey(),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  sessionAt: timestamp("sessionAt").notNull(),
+  summary: text("summary").notNull(),
+  outcome: text("outcome"),
+  followUpAt: timestamp("followUpAt"),
+  recordedByUserId: int("recordedByUserId").notNull().references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const welfareCases = mysqlTable("welfare_cases", {
+  id: int("id").autoincrement().primaryKey(),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  category: varchar("category", { length: 100 }).notNull(),
+  severity: int("severity").default(1).notNull(),
+  status: welfareCaseStatuses.default("OPEN").notNull(),
+  summary: varchar("summary", { length: 500 }).notNull(),
+  privateNotes: text("privateNotes"),
+  assignedToUserId: int("assignedToUserId").references(() => users.id),
+  openedAt: timestamp("openedAt").defaultNow().notNull(),
+  closedAt: timestamp("closedAt"),
+  createdByUserId: int("createdByUserId").notNull().references(() => users.id),
+});
+
+export const safeguardingReferrals = mysqlTable("safeguarding_referrals", {
+  id: int("id").autoincrement().primaryKey(),
+  welfareCaseId: int("welfareCaseId").notNull().references(() => welfareCases.id),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  referralType: varchar("referralType", { length: 120 }).notNull(),
+  status: safeguardingReferralStatuses.default("DRAFT").notNull(),
+  details: text("details").notNull(),
+  referredAt: timestamp("referredAt").defaultNow().notNull(),
+  externalAgency: varchar("externalAgency", { length: 180 }),
+  resolvedAt: timestamp("resolvedAt"),
+  createdByUserId: int("createdByUserId").notNull().references(() => users.id),
+});
+
+export const medicalProfiles = mysqlTable("medical_profiles", {
+  id: int("id").autoincrement().primaryKey(),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  bloodGroup: varchar("bloodGroup", { length: 10 }),
+  allergies: text("allergies"),
+  conditions: text("conditions"),
+  medications: text("medications"),
+  emergencyContactName: varchar("emergencyContactName", { length: 160 }),
+  emergencyContactPhone: varchar("emergencyContactPhone", { length: 40 }),
+  notes: text("notes"),
+  updatedByUserId: int("updatedByUserId").notNull().references(() => users.id),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({ medicalLearnerUnique: uniqueIndex("medical_profile_learner_unique").on(table.learnerId) }));
+
+export const exeatRequests = mysqlTable("exeat_requests", {
+  id: int("id").autoincrement().primaryKey(),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  requestedByUserId: int("requestedByUserId").notNull().references(() => users.id),
+  requestedAt: timestamp("requestedAt").defaultNow().notNull(),
+  departureAt: timestamp("departureAt").notNull(),
+  expectedReturnAt: timestamp("expectedReturnAt").notNull(),
+  destination: varchar("destination", { length: 240 }).notNull(),
+  reason: varchar("reason", { length: 500 }).notNull(),
+  status: exeatStatuses.default("REQUESTED").notNull(),
+  decisionNotes: text("decisionNotes"),
+  decidedByUserId: int("decidedByUserId").references(() => users.id),
+  decidedAt: timestamp("decidedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AttendanceSession = typeof attendanceSessions.$inferSelect;
+export type AttendanceRecord = typeof attendanceRecords.$inferSelect;
+export type DisciplineIncident = typeof disciplineIncidents.$inferSelect;
+export type DisciplineAction = typeof disciplineActions.$inferSelect;
+export type PrefectReport = typeof prefectReports.$inferSelect;
+export type CounsellingRecord = typeof counsellingRecords.$inferSelect;
+export type WelfareCase = typeof welfareCases.$inferSelect;
+export type SafeguardingReferral = typeof safeguardingReferrals.$inferSelect;
+export type MedicalProfile = typeof medicalProfiles.$inferSelect;
+export type ExeatRequest = typeof exeatRequests.$inferSelect;
+
+export const guardianAlerts = mysqlTable("guardian_alerts", {
+  id: int("id").autoincrement().primaryKey(),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  attendanceRecordId: int("attendanceRecordId").references(() => attendanceRecords.id),
+  alertType: guardianAlertTypes.notNull(),
+  status: guardianAlertStatuses.default("QUEUED").notNull(),
+  message: varchar("message", { length: 500 }).notNull(),
+  queuedAt: timestamp("queuedAt").defaultNow().notNull(),
+  sentAt: timestamp("sentAt"),
+  failureReason: text("failureReason"),
+});
+
+export type GuardianAlert = typeof guardianAlerts.$inferSelect;

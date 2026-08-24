@@ -124,8 +124,9 @@ The foundation workflow is deliberately capability-aware: the server checks the 
 | Stage 1 | School identity, academic foundation, people, facilities, permissions, assignments, and secure file references | In progress / foundation build |
 | Stage 2 | Student records, guardians, enrolment, and class lists | Planned |
 | Stage 3 | Learner academic history, explicit progression, ZIMSEC results, configurable A-Level admission, and portal status | Implemented in [`docs/STAGE3_ACADEMIC_HISTORY.md`](docs/STAGE3_ACADEMIC_HISTORY.md) |
-| Stage 4 | Attendance, assessment, report cards, and academic reporting | Planned |
-| Stage 5 | Communication, dashboards, exports, and operational workflows | Planned |
+| Stage 4 | Fee structures, invoicing, and payment tracking | Implemented in `server/finance.ts` and the finance tRPC domain |
+| Stage 5 | Attendance, discipline, learner welfare, safeguarding, medical, and boarding workflows | Implemented in [`docs/STAGE5_ATTENDANCE_WELFARE.md`](docs/STAGE5_ATTENDANCE_WELFARE.md) |
+| Stage 6 | Communication, dashboards, exports, and operational workflows | Planned |
 
 ## Contributing
 
