@@ -41,6 +41,8 @@ import {
   getFinanceData,
   getFinancialReports,
   getLearnerStatement,
+  assertFinanceRole,
+  canViewWholeSchoolFinance,
   recordBeam,
   recordPayment,
   recordScholarship,
@@ -632,41 +634,35 @@ export const appRouter = router({
         const name = input.name?.trim();
         if (input.entity === "academicYear") {
           const year = name || String(new Date().getFullYear() + 1);
-          const result = await db
-            .insert(academicYears)
-            .values({
-              name: year,
-              startDate: new Date(`${year}-01-01`),
-              endDate: new Date(`${year}-12-31`),
-              isCurrent: false,
-            });
+          const result = await db.insert(academicYears).values({
+            name: year,
+            startDate: new Date(`${year}-01-01`),
+            endDate: new Date(`${year}-12-31`),
+            isCurrent: false,
+          });
           const yearId = Number(result[0].insertId);
-          await db
-            .insert(academicTerms)
-            .values(
-              [1, 2, 3].map(termNumber => ({
-                academicYearId: yearId,
-                termNumber,
-                name: `Term ${termNumber}`,
-                startDate: new Date(
-                  `${year}-${termNumber === 1 ? "01-12" : termNumber === 2 ? "05-05" : "09-01"}`
-                ),
-                endDate: new Date(
-                  `${year}-${termNumber === 1 ? "04-02" : termNumber === 2 ? "08-07" : "12-04"}`
-                ),
-                isCurrent: false,
-              }))
-            );
+          await db.insert(academicTerms).values(
+            [1, 2, 3].map(termNumber => ({
+              academicYearId: yearId,
+              termNumber,
+              name: `Term ${termNumber}`,
+              startDate: new Date(
+                `${year}-${termNumber === 1 ? "01-12" : termNumber === 2 ? "05-05" : "09-01"}`
+              ),
+              endDate: new Date(
+                `${year}-${termNumber === 1 ? "04-02" : termNumber === 2 ? "08-07" : "12-04"}`
+              ),
+              isCurrent: false,
+            }))
+          );
           return { entity: input.entity, id: yearId };
         }
         if (input.entity === "house") {
-          const result = await db
-            .insert(houses)
-            .values({
-              name: name || `House ${Date.now() % 1000}`,
-              colour: "#C99A3E",
-              isActive: true,
-            });
+          const result = await db.insert(houses).values({
+            name: name || `House ${Date.now() % 1000}`,
+            colour: "#C99A3E",
+            isActive: true,
+          });
           return { entity: input.entity, id: Number(result[0].insertId) };
         }
         if (input.entity === "department") {
@@ -698,26 +694,22 @@ export const appRouter = router({
           return { entity: input.entity, id: Number(result[0].insertId) };
         }
         if (input.entity === "room") {
-          const result = await db
-            .insert(rooms)
-            .values({
-              name: name || `Classroom ${Date.now() % 1000}`,
-              roomType: "CLASSROOM",
-              isActive: true,
-            });
+          const result = await db.insert(rooms).values({
+            name: name || `Classroom ${Date.now() % 1000}`,
+            roomType: "CLASSROOM",
+            isActive: true,
+          });
           return { entity: input.entity, id: Number(result[0].insertId) };
         }
         if (input.entity === "staff") {
           const firstName = name || "New";
-          const result = await db
-            .insert(staff)
-            .values({
-              staffNumber: `STAFF-${Date.now()}`,
-              firstName,
-              lastName: "Staff member",
-              employmentType: "PERMANENT",
-              status: "ACTIVE",
-            });
+          const result = await db.insert(staff).values({
+            staffNumber: `STAFF-${Date.now()}`,
+            firstName,
+            lastName: "Staff member",
+            employmentType: "PERMANENT",
+            status: "ACTIVE",
+          });
           return { entity: input.entity, id: Number(result[0].insertId) };
         }
         const foundation = await getFoundationData();
@@ -733,15 +725,13 @@ export const appRouter = router({
               code: "BAD_REQUEST",
               message: "Create a Form before adding a class.",
             });
-          const result = await db
-            .insert(classes)
-            .values({
-              formId: firstForm.id,
-              name: name || `${firstForm.label} A`,
-              streamName: "A",
-              attendanceMode: "MIXED",
-              isActive: true,
-            });
+          const result = await db.insert(classes).values({
+            formId: firstForm.id,
+            name: name || `${firstForm.label} A`,
+            streamName: "A",
+            attendanceMode: "MIXED",
+            isActive: true,
+          });
           return { entity: input.entity, id: Number(result[0].insertId) };
         }
         const firstTeacher = foundation.staff[0];
@@ -754,15 +744,13 @@ export const appRouter = router({
             message:
               "Add staff, subjects, classes and an academic year before creating an assignment.",
           });
-        const result = await db
-          .insert(teacherAssignments)
-          .values({
-            teacherStaffId: firstTeacher.id,
-            subjectId: firstSubject.id,
-            classId: firstClass.id,
-            academicYearId: firstYear.id,
-            isPrimaryTeacher: true,
-          });
+        const result = await db.insert(teacherAssignments).values({
+          teacherStaffId: firstTeacher.id,
+          subjectId: firstSubject.id,
+          classId: firstClass.id,
+          academicYearId: firstYear.id,
+          isPrimaryTeacher: true,
+        });
         return { entity: input.entity, id: Number(result[0].insertId) };
       }),
     manageRecord: protectedProcedure
@@ -1151,7 +1139,11 @@ export const appRouter = router({
   }),
   finance: router({
     overview: protectedProcedure.query(async ({ ctx }) =>
-      getFinanceData(ctx.user.id, ctx.user.role === "admin")
+      getFinanceData(
+        ctx.user.id,
+        ctx.user.role === "admin",
+        await canViewWholeSchoolFinance(ctx.user.id, ctx.user.role === "admin")
+      )
     ),
     calculateInvoice: protectedProcedure
       .input(
@@ -1163,14 +1155,36 @@ export const appRouter = router({
       .query(({ input }) =>
         calculateInvoiceTotals(input.lines, input.discountMinor ?? 0)
       ),
-    createFeeStructure: adminProcedure
+    createFeeStructure: protectedProcedure
       .input(feeStructureInput)
-      .mutation(async ({ input, ctx }) =>
-        createFeeStructure({ ...input, createdByUserId: ctx.user.id })
-      ),
-    createInvoice: adminProcedure
+      .mutation(async ({ input, ctx }) => {
+        await assertFinanceRole(
+          ctx.user.id,
+          [
+            "HEADTEACHER",
+            "DEPUTY_HEAD",
+            "BURSAR",
+            "FINANCE_OFFICER",
+            "SCHOOL_ADMINISTRATOR",
+          ],
+          ctx.user.role === "admin"
+        );
+        return createFeeStructure({ ...input, createdByUserId: ctx.user.id });
+      }),
+    createInvoice: protectedProcedure
       .input(invoiceInput)
       .mutation(async ({ input, ctx }) => {
+        await assertFinanceRole(
+          ctx.user.id,
+          [
+            "HEADTEACHER",
+            "DEPUTY_HEAD",
+            "BURSAR",
+            "FINANCE_OFFICER",
+            "SCHOOL_ADMINISTRATOR",
+          ],
+          ctx.user.role === "admin"
+        );
         const result = await createInvoice({
           ...input,
           createdByUserId: ctx.user.id,
@@ -1190,9 +1204,20 @@ export const appRouter = router({
         });
         return result;
       }),
-    recordPayment: adminProcedure
+    recordPayment: protectedProcedure
       .input(paymentInput)
       .mutation(async ({ input, ctx }) => {
+        await assertFinanceRole(
+          ctx.user.id,
+          [
+            "HEADTEACHER",
+            "DEPUTY_HEAD",
+            "BURSAR",
+            "FINANCE_OFFICER",
+            "SCHOOL_ADMINISTRATOR",
+          ],
+          ctx.user.role === "admin"
+        );
         const result = await recordPayment({
           ...input,
           receivedByUserId: ctx.user.id,
@@ -1223,8 +1248,21 @@ export const appRouter = router({
           ctx.user.role === "admin"
         )
       ),
-    reports: adminProcedure.query(async () => getFinancialReports()),
-    createApprovedCharge: adminProcedure
+    reports: protectedProcedure.query(async ({ ctx }) => {
+      await assertFinanceRole(
+        ctx.user.id,
+        [
+          "HEADTEACHER",
+          "DEPUTY_HEAD",
+          "BURSAR",
+          "FINANCE_OFFICER",
+          "SCHOOL_ADMINISTRATOR",
+        ],
+        ctx.user.role === "admin"
+      );
+      return getFinancialReports();
+    }),
+    createApprovedCharge: protectedProcedure
       .input(
         z.object({
           code: z.string().min(1).max(40),
@@ -1235,15 +1273,37 @@ export const appRouter = router({
           residencyType: z.enum(["BOARDING", "DAY_SCHOLAR", "ALL"]),
         })
       )
-      .mutation(async ({ input, ctx }) =>
-        createApprovedCharge({ ...input, createdByUserId: ctx.user.id })
-      ),
-    approveSchoolCharge: adminProcedure
+      .mutation(async ({ input, ctx }) => {
+        await assertFinanceRole(
+          ctx.user.id,
+          [
+            "HEADTEACHER",
+            "DEPUTY_HEAD",
+            "BURSAR",
+            "FINANCE_OFFICER",
+            "SCHOOL_ADMINISTRATOR",
+          ],
+          ctx.user.role === "admin"
+        );
+        return createApprovedCharge({ ...input, createdByUserId: ctx.user.id });
+      }),
+    approveSchoolCharge: protectedProcedure
       .input(z.object({ chargeId: z.number().int().positive() }))
-      .mutation(async ({ input, ctx }) =>
-        approveSchoolCharge({ ...input, approvedByUserId: ctx.user.id })
-      ),
-    savePaynowSettings: adminProcedure
+      .mutation(async ({ input, ctx }) => {
+        await assertFinanceRole(
+          ctx.user.id,
+          [
+            "HEADTEACHER",
+            "DEPUTY_HEAD",
+            "BURSAR",
+            "FINANCE_OFFICER",
+            "SCHOOL_ADMINISTRATOR",
+          ],
+          ctx.user.role === "admin"
+        );
+        return approveSchoolCharge({ ...input, approvedByUserId: ctx.user.id });
+      }),
+    savePaynowSettings: protectedProcedure
       .input(
         z.object({
           integrationId: z.string().min(1).max(120),
@@ -1253,10 +1313,21 @@ export const appRouter = router({
           isActive: z.boolean(),
         })
       )
-      .mutation(async ({ input, ctx }) =>
-        savePaynowSettings({ ...input, updatedByUserId: ctx.user.id })
-      ),
-    recordScholarship: adminProcedure
+      .mutation(async ({ input, ctx }) => {
+        await assertFinanceRole(
+          ctx.user.id,
+          [
+            "HEADTEACHER",
+            "DEPUTY_HEAD",
+            "BURSAR",
+            "FINANCE_OFFICER",
+            "SCHOOL_ADMINISTRATOR",
+          ],
+          ctx.user.role === "admin"
+        );
+        return savePaynowSettings({ ...input, updatedByUserId: ctx.user.id });
+      }),
+    recordScholarship: protectedProcedure
       .input(
         z.object({
           learnerId: z.number().int().positive(),
@@ -1268,10 +1339,21 @@ export const appRouter = router({
           notes: z.string().max(2000).optional().nullable(),
         })
       )
-      .mutation(async ({ input, ctx }) =>
-        recordScholarship({ ...input, approvedByUserId: ctx.user.id })
-      ),
-    recordBeam: adminProcedure
+      .mutation(async ({ input, ctx }) => {
+        await assertFinanceRole(
+          ctx.user.id,
+          [
+            "HEADTEACHER",
+            "DEPUTY_HEAD",
+            "BURSAR",
+            "FINANCE_OFFICER",
+            "SCHOOL_ADMINISTRATOR",
+          ],
+          ctx.user.role === "admin"
+        );
+        return recordScholarship({ ...input, approvedByUserId: ctx.user.id });
+      }),
+    recordBeam: protectedProcedure
       .input(
         z.object({
           learnerId: z.number().int().positive(),
@@ -1282,10 +1364,21 @@ export const appRouter = router({
           notes: z.string().max(2000).optional().nullable(),
         })
       )
-      .mutation(async ({ input, ctx }) =>
-        recordBeam({ ...input, approvedByUserId: ctx.user.id })
-      ),
-    reconcilePayment: adminProcedure
+      .mutation(async ({ input, ctx }) => {
+        await assertFinanceRole(
+          ctx.user.id,
+          [
+            "HEADTEACHER",
+            "DEPUTY_HEAD",
+            "BURSAR",
+            "FINANCE_OFFICER",
+            "SCHOOL_ADMINISTRATOR",
+          ],
+          ctx.user.role === "admin"
+        );
+        return recordBeam({ ...input, approvedByUserId: ctx.user.id });
+      }),
+    reconcilePayment: protectedProcedure
       .input(
         z.object({
           paymentId: z.number().int().positive(),
@@ -1295,6 +1388,17 @@ export const appRouter = router({
         })
       )
       .mutation(async ({ input, ctx }) => {
+        await assertFinanceRole(
+          ctx.user.id,
+          [
+            "HEADTEACHER",
+            "DEPUTY_HEAD",
+            "BURSAR",
+            "FINANCE_OFFICER",
+            "SCHOOL_ADMINISTRATOR",
+          ],
+          ctx.user.role === "admin"
+        );
         const result = await reconcilePayment({
           ...input,
           reconciledByUserId: ctx.user.id,

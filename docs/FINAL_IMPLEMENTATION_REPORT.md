@@ -75,3 +75,11 @@ The changes were committed as `1d93019` with message `feat: complete role dashbo
 ## Remaining deployment-specific checks
 
 Before production use, the deployment owner must apply and verify the current database migrations, configure Manus OAuth and the notification/payment providers, perform a real backup restore test, verify reverse-proxy and network security, test live guardian and learner relationships, and conduct an authenticated browser review for each role. The local build and tests cannot prove the behavior of an external identity provider, production database, proxy, or provider callback.
+
+## Continuation hardening after PR review
+
+A follow-up authorization audit identified that finance mutations were still represented as administrator-only procedures even though the Bursar and Finance Officer dashboards require those roles to operate. The finance routes now use explicit active-role checks for Headteacher, Deputy Head, Bursar, Finance Officer, and School Administrator operations, while learner and guardian finance reads remain relationship-scoped. Finance role checks also enforce assignment effective dates.
+
+Timetable whole-school access now checks active and currently effective Headteacher assignments, and teacher timetable lookups ignore inactive staff. No administrator-only timetable mutation was opened to ordinary roles.
+
+The local verification suite was rerun after these changes with the same result: `pnpm check`, all 39 tests, `pnpm build`, and `git diff --check` passed. GitHub Actions was rerun twice but did not begin job steps because the GitHub account is locked due to a billing issue; the repository check annotation explicitly identifies this as the cause. Pull request #15 remains open and must be reviewed and rechecked after the GitHub account-level blocker is resolved.
