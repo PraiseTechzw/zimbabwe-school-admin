@@ -10,6 +10,7 @@ import { addSchoolDocument, getDb, getFoundationData, getSchoolDocuments, saveSc
 import { createLearner, explicitlyEnrolForm5, getAcademicData, getPortalAcademicStatus, progressToForm6, recordAcademicHistory, saveALevelApplication, saveALevelRequirement, saveOLevelResults, updateALevelApplication } from "./academic";
 import { approveSchoolCharge, calculateInvoiceTotals, createApprovedCharge, createFeeStructure, createInvoice, getFinanceData, getFinancialReports, getLearnerStatement, recordBeam, recordPayment, recordScholarship, reconcilePayment, savePaynowSettings } from "./finance";
 import { addDisciplineAction, assertStage5Permission, createDisciplineIncident, createExeatRequest, createSafeguardingReferral, createWelfareCase, getStage5Dashboard, getStage5SensitiveData, recordAttendance, stage5Permissions, upsertMedicalProfile } from "./welfare";
+import { createSchoolEvent, createTimetableEntry, getTimetableAdminData, getTimetableView } from "./timetable";
 import { academicTerms, academicYears, classes, departments, forms, houses, rooms, staff, subjects, teacherAssignments } from "../drizzle/schema";
 
 const schoolProfileInput = z.object({
@@ -70,6 +71,8 @@ const welfareInput = z.object({ learnerId: z.number().int().positive(), category
 const safeguardingInput = z.object({ welfareCaseId: z.number().int().positive(), learnerId: z.number().int().positive(), referralType: z.string().min(2).max(120), details: z.string().min(2).max(8000), externalAgency: z.string().max(180).optional().nullable() });
 const medicalInput = z.object({ learnerId: z.number().int().positive(), bloodGroup: z.string().max(10).optional().nullable(), allergies: z.string().max(4000).optional().nullable(), conditions: z.string().max(4000).optional().nullable(), medications: z.string().max(4000).optional().nullable(), emergencyContactName: z.string().max(160).optional().nullable(), emergencyContactPhone: z.string().max(40).optional().nullable(), notes: z.string().max(4000).optional().nullable() });
 const exeatInput = z.object({ learnerId: z.number().int().positive(), departureAt: z.coerce.date(), expectedReturnAt: z.coerce.date(), destination: z.string().min(2).max(240), reason: z.string().min(2).max(500) });
+const timetableEntryInput = z.object({ academicYearId: z.number().int().positive(), termId: z.number().int().positive().optional().nullable(), classId: z.number().int().positive().optional().nullable(), teacherStaffId: z.number().int().positive().optional().nullable(), subjectId: z.number().int().positive().optional().nullable(), roomId: z.number().int().positive().optional().nullable(), dayOfWeek: z.enum(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"]), startTime: z.string().regex(/^([01]\\d|2[0-3]):[0-5]\\d$/), endTime: z.string().regex(/^([01]\\d|2[0-3]):[0-5]\\d$/), entryType: z.enum(["LESSON", "ASSEMBLY", "EXAMINATION", "EVENT"]), title: z.string().min(2).max(180), isLaboratory: z.boolean().optional(), isRecurring: z.boolean().optional(), notes: z.string().max(2000).optional().nullable() });
+const schoolEventInput = z.object({ academicYearId: z.number().int().positive(), termId: z.number().int().positive().optional().nullable(), eventType: z.enum(["ASSEMBLY", "EXAMINATION", "SCHOOL_EVENT", "SPORTS_EVENT", "CONSULTATION_DAY", "SPEECH_DAY"]), visibility: z.enum(["HEADTEACHER", "STAFF", "LEARNERS_GUARDIANS", "ALL"]), title: z.string().min(2).max(180), startAt: z.coerce.date(), endAt: z.coerce.date(), roomId: z.number().int().positive().optional().nullable(), description: z.string().max(4000).optional().nullable(), isRecurring: z.boolean().optional() });
 
 export const appRouter = router({
   system: systemRouter,
@@ -221,6 +224,12 @@ export const appRouter = router({
     createSafeguardingReferral: protectedProcedure.input(safeguardingInput).mutation(async ({ input, ctx }) => { await assertStage5Permission(ctx.user.id, stage5Permissions.safeguarding, "canCreate", ctx.user.role === "admin"); return createSafeguardingReferral({ ...input, createdByUserId: ctx.user.id }); }),
     upsertMedicalProfile: protectedProcedure.input(medicalInput).mutation(async ({ input, ctx }) => { await assertStage5Permission(ctx.user.id, stage5Permissions.medical, "canEdit", ctx.user.role === "admin"); return upsertMedicalProfile({ ...input, updatedByUserId: ctx.user.id }); }),
     createExeatRequest: protectedProcedure.input(exeatInput).mutation(async ({ input, ctx }) => { await assertStage5Permission(ctx.user.id, stage5Permissions.boarding, "canCreate", ctx.user.role === "admin"); return createExeatRequest({ ...input, requestedByUserId: ctx.user.id }); }),
+  }),
+  timetable: router({
+    adminData: adminProcedure.query(async () => getTimetableAdminData()),
+    view: protectedProcedure.input(z.object({ view: z.enum(["HEADTEACHER", "TEACHER", "LEARNER", "GUARDIAN"]) })).query(async ({ input, ctx }) => getTimetableView(ctx.user.id, input.view, ctx.user.role === "admin")),
+    createEntry: adminProcedure.input(timetableEntryInput).mutation(async ({ input, ctx }) => createTimetableEntry({ ...input, createdByUserId: ctx.user.id })),
+    createEvent: adminProcedure.input(schoolEventInput).mutation(async ({ input, ctx }) => createSchoolEvent({ ...input, createdByUserId: ctx.user.id })),
   }),
 });
 
