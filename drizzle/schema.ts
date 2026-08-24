@@ -200,7 +200,12 @@ const decisionStatusValues = ["PENDING", "SELECTED", "NOT_SELECTED", "ADMITTED",
 export const progressionTypes = mysqlEnum("progressionType", ["NORMAL_SECONDARY", "A_LEVEL_ADMISSION", "A_LEVEL_CONTINUATION"]);
 export const feeFrequencies = mysqlEnum("feeFrequency", ["ONCE", "TERM", "ANNUAL"]);
 export const invoiceStatuses = mysqlEnum("invoiceStatus", ["DRAFT", "ISSUED", "PARTIALLY_PAID", "PAID", "VOID", "OVERDUE"]);
-export const paymentMethods = mysqlEnum("paymentMethod", ["CASH", "ECOCASH", "ZIPIT", "BANK_TRANSFER", "CARD", "OTHER"]);
+export const paymentMethods = mysqlEnum("paymentMethod", ["CASH", "BANK_TRANSFER", "ECOCASH", "ZIPIT", "INNBUCKS", "PAYNOW", "CARD", "OTHER"]);
+export const residencyTypes = mysqlEnum("residencyType", ["BOARDING", "DAY_SCHOLAR", "ALL"]);
+export const chargeStatuses = mysqlEnum("chargeStatus", ["DRAFT", "SUBMITTED", "APPROVED", "RETIRED"]);
+export const assistanceTypes = mysqlEnum("assistanceType", ["SCHOLARSHIP", "BEAM"]);
+export const assistanceStatuses = mysqlEnum("assistanceStatus", ["PENDING", "APPROVED", "DECLINED", "EXPIRED"]);
+export const reconciliationStatuses = mysqlEnum("reconciliationStatus", ["UNMATCHED", "MATCHED", "EXCEPTION", "REVERSED"]);
 export const paymentStatuses = mysqlEnum("paymentStatus", ["PENDING", "CONFIRMED", "REVERSED"]);
 export const attendanceModes = mysqlEnum("attendanceMode", ["DAILY", "PERIOD", "BOARDING_ROLL_CALL"]);
 export const attendanceStatuses = mysqlEnum("attendanceStatus", ["PRESENT", "ABSENT", "LATE", "EXCUSED"]);
@@ -329,12 +334,37 @@ export const aLevelApplicationSubjects = mysqlTable("a_level_application_subject
   subjectName: varchar("subjectName", { length: 140 }).notNull(),
 }, (table) => ({ applicationSubjectUnique: uniqueIndex("a_level_application_subject_unique").on(table.applicationId, table.subjectId) }));
 
+export const financialAccounts = mysqlTable("financial_accounts", {
+  id: int("id").autoincrement().primaryKey(),
+  accountNumber: varchar("accountNumber", { length: 60 }).notNull(),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  currency: varchar("currency", { length: 3 }).default("USD").notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({ accountNumberUnique: uniqueIndex("financial_account_number_unique").on(table.accountNumber), learnerCurrencyUnique: uniqueIndex("financial_account_learner_currency_unique").on(table.learnerId, table.currency) }));
+
+export const approvedSchoolCharges = mysqlTable("approved_school_charges", {
+  id: int("id").autoincrement().primaryKey(),
+  code: varchar("code", { length: 40 }).notNull(),
+  name: varchar("name", { length: 160 }).notNull(),
+  description: text("description"),
+  amountMinor: int("amountMinor").notNull(),
+  currency: varchar("currency", { length: 3 }).notNull(),
+  residencyType: residencyTypes.default("ALL").notNull(),
+  status: chargeStatuses.default("DRAFT").notNull(),
+  approvedByUserId: int("approvedByUserId").references(() => users.id),
+  approvedAt: timestamp("approvedAt"),
+  createdByUserId: int("createdByUserId").notNull().references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({ schoolChargeCodeUnique: uniqueIndex("approved_school_charge_code_unique").on(table.code) }));
+
 export const feeStructures = mysqlTable("fee_structures", {
   id: int("id").autoincrement().primaryKey(),
   name: varchar("name", { length: 160 }).notNull(),
   academicYearId: int("academicYearId").notNull().references(() => academicYears.id),
   formId: int("formId").references(() => forms.id),
   pathway: pathways,
+  residencyType: residencyTypes.default("ALL").notNull(),
   currency: varchar("currency", { length: 3 }).default("USD").notNull(),
   isActive: boolean("isActive").default(true).notNull(),
   createdByUserId: int("createdByUserId").notNull().references(() => users.id),
@@ -356,7 +386,9 @@ export const invoices = mysqlTable("invoices", {
   id: int("id").autoincrement().primaryKey(),
   invoiceNumber: varchar("invoiceNumber", { length: 60 }).notNull(),
   learnerId: int("learnerId").notNull().references(() => learners.id),
+  financialAccountId: int("financialAccountId").references(() => financialAccounts.id),
   academicYearId: int("academicYearId").notNull().references(() => academicYears.id),
+  termId: int("termId").references(() => academicTerms.id),
   feeStructureId: int("feeStructureId").references(() => feeStructures.id),
   currency: varchar("currency", { length: 3 }).notNull(),
   subtotalMinor: int("subtotalMinor").notNull(),
@@ -381,10 +413,62 @@ export const invoiceLines = mysqlTable("invoice_lines", {
   lineTotalMinor: int("lineTotalMinor").notNull(),
 });
 
+export const scholarships = mysqlTable("scholarships", {
+  id: int("id").autoincrement().primaryKey(),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  financialAccountId: int("financialAccountId").references(() => financialAccounts.id),
+  name: varchar("name", { length: 160 }).notNull(),
+  amountMinor: int("amountMinor").notNull(),
+  currency: varchar("currency", { length: 3 }).notNull(),
+  academicYearId: int("academicYearId").notNull().references(() => academicYears.id),
+  status: assistanceStatuses.default("PENDING").notNull(),
+  sponsor: varchar("sponsor", { length: 160 }),
+  notes: text("notes"),
+  approvedByUserId: int("approvedByUserId").references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const beamRecords = mysqlTable("beam_records", {
+  id: int("id").autoincrement().primaryKey(),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  financialAccountId: int("financialAccountId").references(() => financialAccounts.id),
+  academicYearId: int("academicYearId").notNull().references(() => academicYears.id),
+  referenceNumber: varchar("referenceNumber", { length: 120 }),
+  amountMinor: int("amountMinor").notNull(),
+  currency: varchar("currency", { length: 3 }).notNull(),
+  status: assistanceStatuses.default("PENDING").notNull(),
+  notes: text("notes"),
+  approvedByUserId: int("approvedByUserId").references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const paymentReconciliations = mysqlTable("payment_reconciliations", {
+  id: int("id").autoincrement().primaryKey(),
+  paymentId: int("paymentId").notNull().references(() => payments.id),
+  externalReference: varchar("externalReference", { length: 160 }),
+  status: reconciliationStatuses.default("UNMATCHED").notNull(),
+  reconciledAt: timestamp("reconciledAt"),
+  reconciledByUserId: int("reconciledByUserId").references(() => users.id),
+  exceptionReason: text("exceptionReason"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const paynowSettings = mysqlTable("paynow_settings", {
+  id: int("id").autoincrement().primaryKey(),
+  integrationId: varchar("integrationId", { length: 120 }).notNull(),
+  integrationKeyEncrypted: text("integrationKeyEncrypted").notNull(),
+  returnUrl: varchar("returnUrl", { length: 500 }).notNull(),
+  resultUrl: varchar("resultUrl", { length: 500 }).notNull(),
+  isActive: boolean("isActive").default(false).notNull(),
+  updatedByUserId: int("updatedByUserId").notNull().references(() => users.id),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
 export const payments = mysqlTable("payments", {
   id: int("id").autoincrement().primaryKey(),
   receiptNumber: varchar("receiptNumber", { length: 60 }).notNull(),
   learnerId: int("learnerId").notNull().references(() => learners.id),
+  financialAccountId: int("financialAccountId").references(() => financialAccounts.id),
   invoiceId: int("invoiceId").references(() => invoices.id),
   amountMinor: int("amountMinor").notNull(),
   currency: varchar("currency", { length: 3 }).notNull(),
@@ -418,11 +502,17 @@ export type LearnerAcademicHistory = typeof learnerAcademicHistory.$inferSelect;
 export type OLevelResult = typeof oLevelResults.$inferSelect;
 export type ALevelRequirement = typeof aLevelRequirements.$inferSelect;
 export type ALevelApplication = typeof aLevelApplications.$inferSelect;
+export type FinancialAccount = typeof financialAccounts.$inferSelect;
+export type ApprovedSchoolCharge = typeof approvedSchoolCharges.$inferSelect;
 export type FeeStructure = typeof feeStructures.$inferSelect;
 export type FeeStructureItem = typeof feeStructureItems.$inferSelect;
 export type Invoice = typeof invoices.$inferSelect;
 export type InvoiceLine = typeof invoiceLines.$inferSelect;
 export type Payment = typeof payments.$inferSelect;
+export type Scholarship = typeof scholarships.$inferSelect;
+export type BeamRecord = typeof beamRecords.$inferSelect;
+export type PaymentReconciliation = typeof paymentReconciliations.$inferSelect;
+export type PaynowSettings = typeof paynowSettings.$inferSelect;
 
 export const attendanceSessions = mysqlTable("attendance_sessions", {
   id: int("id").autoincrement().primaryKey(),

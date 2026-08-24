@@ -8,6 +8,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import AcademicHistory from "./pages/AcademicHistory";
 import Welfare from "./pages/Welfare";
+import Finance from "./pages/Finance";
 
 function Router() {
   return (
@@ -19,6 +20,7 @@ function Router() {
       </Route>
       <Route path="/academic"><DashboardLayout><AcademicHistory /></DashboardLayout></Route>
       <Route path="/welfare"><DashboardLayout><Welfare /></DashboardLayout></Route>
+      <Route path="/finance"><DashboardLayout><Finance /></DashboardLayout></Route>
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
