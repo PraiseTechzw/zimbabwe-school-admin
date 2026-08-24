@@ -40,6 +40,7 @@ const menuItems = [
   { icon: History, label: "Learner academic history", path: "/academic" },
   { icon: HeartPulse, label: "Attendance & learner welfare", path: "/welfare" },
   { icon: Banknote, label: "School finance", path: "/finance" },
+  { icon: CalendarDays, label: "Timetable & daily operations", path: "/timetable" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";

@@ -128,6 +128,7 @@ The foundation workflow is deliberately capability-aware: the server checks the 
 | Stage 5 | Attendance, discipline, learner welfare, safeguarding, medical, and boarding workflows | Implemented in [`docs/STAGE5_ATTENDANCE_WELFARE.md`](docs/STAGE5_ATTENDANCE_WELFARE.md) |
 | Stage 6 | School finance, USD/ZiG accounts, invoices, payments, assistance, reconciliation, reports, and Paynow configuration | Implemented in [`docs/STAGE6_SCHOOL_FINANCE.md`](docs/STAGE6_SCHOOL_FINANCE.md) |
 | Stage 7 | Communication, dashboards, exports, and operational workflows | Planned |
+| Stage 8 | School timetable, teacher workload, room and laboratory allocation, clash detection, and daily operations | Implemented in [`docs/STAGE8_TIMETABLE_OPERATIONS.md`](docs/STAGE8_TIMETABLE_OPERATIONS.md) |
 
 ## Contributing
 

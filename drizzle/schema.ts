@@ -206,6 +206,9 @@ export const chargeStatuses = mysqlEnum("chargeStatus", ["DRAFT", "SUBMITTED", "
 export const assistanceTypes = mysqlEnum("assistanceType", ["SCHOLARSHIP", "BEAM"]);
 export const assistanceStatuses = mysqlEnum("assistanceStatus", ["PENDING", "APPROVED", "DECLINED", "EXPIRED"]);
 export const reconciliationStatuses = mysqlEnum("reconciliationStatus", ["UNMATCHED", "MATCHED", "EXCEPTION", "REVERSED"]);
+export const timetableEntryTypes = mysqlEnum("timetableEntryType", ["LESSON", "ASSEMBLY", "EXAMINATION", "EVENT"]);
+export const eventTypes = mysqlEnum("eventType", ["ASSEMBLY", "EXAMINATION", "SCHOOL_EVENT", "SPORTS_EVENT", "CONSULTATION_DAY", "SPEECH_DAY"]);
+export const eventVisibility = mysqlEnum("eventVisibility", ["HEADTEACHER", "STAFF", "LEARNERS_GUARDIANS", "ALL"]);
 export const paymentStatuses = mysqlEnum("paymentStatus", ["PENDING", "CONFIRMED", "REVERSED"]);
 export const attendanceModes = mysqlEnum("attendanceMode", ["DAILY", "PERIOD", "BOARDING_ROLL_CALL"]);
 export const attendanceStatuses = mysqlEnum("attendanceStatus", ["PRESENT", "ABSENT", "LATE", "EXCUSED"]);
@@ -513,6 +516,45 @@ export type Scholarship = typeof scholarships.$inferSelect;
 export type BeamRecord = typeof beamRecords.$inferSelect;
 export type PaymentReconciliation = typeof paymentReconciliations.$inferSelect;
 export type PaynowSettings = typeof paynowSettings.$inferSelect;
+
+export const timetableEntries = mysqlTable("timetable_entries", {
+  id: int("id").autoincrement().primaryKey(),
+  academicYearId: int("academicYearId").notNull().references(() => academicYears.id),
+  termId: int("termId").references(() => academicTerms.id),
+  classId: int("classId").references(() => classes.id),
+  teacherStaffId: int("teacherStaffId").references(() => staff.id),
+  subjectId: int("subjectId").references(() => subjects.id),
+  roomId: int("roomId").references(() => rooms.id),
+  dayOfWeek: varchar("dayOfWeek", { length: 12 }).notNull(),
+  startTime: varchar("startTime", { length: 5 }).notNull(),
+  endTime: varchar("endTime", { length: 5 }).notNull(),
+  entryType: timetableEntryTypes.default("LESSON").notNull(),
+  title: varchar("title", { length: 180 }).notNull(),
+  isLaboratory: boolean("isLaboratory").default(false).notNull(),
+  isRecurring: boolean("isRecurring").default(true).notNull(),
+  notes: text("notes"),
+  createdByUserId: int("createdByUserId").notNull().references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({ timetableSlotIndex: uniqueIndex("timetable_slot_index").on(table.academicYearId, table.termId, table.dayOfWeek, table.startTime, table.endTime, table.classId, table.teacherStaffId, table.roomId) }));
+
+export const schoolEvents = mysqlTable("school_events", {
+  id: int("id").autoincrement().primaryKey(),
+  academicYearId: int("academicYearId").notNull().references(() => academicYears.id),
+  termId: int("termId").references(() => academicTerms.id),
+  eventType: eventTypes.notNull(),
+  visibility: eventVisibility.default("ALL").notNull(),
+  title: varchar("title", { length: 180 }).notNull(),
+  startAt: timestamp("startAt").notNull(),
+  endAt: timestamp("endAt").notNull(),
+  roomId: int("roomId").references(() => rooms.id),
+  description: text("description"),
+  isRecurring: boolean("isRecurring").default(false).notNull(),
+  createdByUserId: int("createdByUserId").notNull().references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type TimetableEntry = typeof timetableEntries.$inferSelect;
+export type SchoolEvent = typeof schoolEvents.$inferSelect;
 
 export const attendanceSessions = mysqlTable("attendance_sessions", {
   id: int("id").autoincrement().primaryKey(),
