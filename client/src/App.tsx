@@ -6,6 +6,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import DashboardLayout from "./components/DashboardLayout";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import AcademicHistory from "./pages/AcademicHistory";
 
 function Router() {
   return (
@@ -15,6 +16,7 @@ function Router() {
           <Home />
         </DashboardLayout>
       </Route>
+      <Route path="/academic"><DashboardLayout><AcademicHistory /></DashboardLayout></Route>
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

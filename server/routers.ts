@@ -7,6 +7,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { storagePut } from "./storage";
 import { addSchoolDocument, getDb, getFoundationData, getSchoolDocuments, saveSchoolProfile, userHasPermission } from "./db";
+import { createLearner, explicitlyEnrolForm5, getAcademicData, getPortalAcademicStatus, progressToForm6, recordAcademicHistory, saveALevelApplication, saveALevelRequirement, saveOLevelResults, updateALevelApplication } from "./academic";
 import { academicTerms, academicYears, classes, departments, forms, houses, rooms, staff, subjects, teacherAssignments } from "../drizzle/schema";
 
 const schoolProfileInput = z.object({
@@ -50,6 +51,13 @@ const manageRecordInput = z.object({
   id: z.number().int().positive(),
   name: z.string().max(140).optional(),
 });
+
+const learnerInput = z.object({ studentId: z.string().min(2).max(60), admissionNumber: z.string().max(60).optional().nullable(), userId: z.number().int().positive().optional().nullable(), firstName: z.string().min(1).max(80), middleName: z.string().max(80).optional().nullable(), lastName: z.string().min(1).max(80), dateOfBirth: z.coerce.date().optional().nullable(), gender: z.string().max(30).optional().nullable() });
+const historyInput = z.object({ learnerId: z.number().int().positive(), academicYearId: z.number().int().positive(), termId: z.number().int().positive(), formId: z.number().int().positive(), classId: z.number().int().positive().optional().nullable(), pathway: z.enum(["O_LEVEL", "A_LEVEL"]), progressionType: z.enum(["NORMAL_SECONDARY", "A_LEVEL_ADMISSION", "A_LEVEL_CONTINUATION"]).optional().nullable(), previousHistoryId: z.number().int().positive().optional().nullable(), notes: z.string().max(2000).optional().nullable() });
+const oLevelInput = z.object({ learnerId: z.number().int().positive(), examinationYear: z.number().int().min(1990).max(2100), candidateNumber: z.string().min(1).max(80), centreNumber: z.string().max(80).optional().nullable(), candidateName: z.string().min(2).max(180), subjects: z.array(z.object({ subjectId: z.number().int().positive().optional().nullable(), subjectName: z.string().min(1).max(140), grade: z.string().min(1).max(10), points: z.number().int().min(0).max(100).optional().nullable() })).min(1) });
+const requirementInput = z.object({ name: z.string().min(2).max(160), description: z.string().max(2000).optional().nullable(), minimumPoints: z.number().int().min(0).max(100).optional().nullable(), minimumPasses: z.number().int().min(0).max(30).optional().nullable(), subjects: z.array(z.object({ subjectId: z.number().int().positive(), minimumGrade: z.string().max(10).optional().nullable(), isRequired: z.boolean() })).min(1) });
+const applicationInput = z.object({ learnerId: z.number().int().positive(), academicYearId: z.number().int().positive(), oLevelResultId: z.number().int().positive(), requirementId: z.number().int().positive().optional().nullable(), preferredPathway: z.literal("A_LEVEL"), subjectIds: z.array(z.number().int().positive()).min(1), status: z.enum(["NOT_STARTED", "DRAFT", "SUBMITTED", "UNDER_REVIEW", "RESULTS_VERIFICATION", "ACCEPTED", "CONDITIONALLY_ACCEPTED", "REJECTED", "WITHDRAWN"]).optional(), notes: z.string().max(2000).optional().nullable() });
+const applicationReviewInput = z.object({ applicationId: z.number().int().positive(), applicationStatus: z.enum(["NOT_STARTED", "DRAFT", "SUBMITTED", "UNDER_REVIEW", "RESULTS_VERIFICATION", "ACCEPTED", "CONDITIONALLY_ACCEPTED", "REJECTED", "WITHDRAWN"]).optional(), verificationStatus: z.enum(["NOT_STARTED", "PENDING", "VERIFIED", "FAILED"]).optional(), selectionDecision: z.enum(["PENDING", "SELECTED", "NOT_SELECTED", "ADMITTED", "NOT_ADMITTED"]).optional(), admissionDecision: z.enum(["PENDING", "SELECTED", "NOT_SELECTED", "ADMITTED", "NOT_ADMITTED"]).optional(), notes: z.string().max(2000).optional().nullable() });
 
 export const appRouter = router({
   system: systemRouter,
@@ -163,6 +171,18 @@ export const appRouter = router({
       const stored = await storagePut(`school-logos/${ctx.user.id}/${safeName}`, buffer, input.mimeType);
       return { key: stored.key, url: stored.url };
     }),
+  }),
+  academic: router({
+    overview: protectedProcedure.query(async () => getAcademicData()),
+    portalStatus: protectedProcedure.query(async ({ ctx }) => getPortalAcademicStatus(ctx.user.id)),
+    createLearner: adminProcedure.input(learnerInput).mutation(async ({ input }) => createLearner({ ...input, status: "ACTIVE" })),
+    recordHistory: adminProcedure.input(historyInput).mutation(async ({ input, ctx }) => recordAcademicHistory({ ...input, recordedByUserId: ctx.user.id })),
+    saveOLevelResults: protectedProcedure.input(oLevelInput).mutation(async ({ input }) => saveOLevelResults(input)),
+    configureALevelRequirement: adminProcedure.input(requirementInput).mutation(async ({ input, ctx }) => saveALevelRequirement({ ...input, createdByUserId: ctx.user.id })),
+    submitALevelApplication: protectedProcedure.input(applicationInput).mutation(async ({ input }) => saveALevelApplication(input)),
+    reviewALevelApplication: adminProcedure.input(applicationReviewInput).mutation(async ({ input, ctx }) => updateALevelApplication({ ...input, reviewedByUserId: ctx.user.id })),
+    enrolForm5: adminProcedure.input(z.object({ applicationId: z.number().int().positive(), academicYearId: z.number().int().positive(), termId: z.number().int().positive(), classId: z.number().int().positive().optional().nullable() })).mutation(async ({ input, ctx }) => explicitlyEnrolForm5({ ...input, recordedByUserId: ctx.user.id })),
+    progressForm6: adminProcedure.input(z.object({ learnerId: z.number().int().positive(), academicYearId: z.number().int().positive(), termId: z.number().int().positive(), classId: z.number().int().positive().optional().nullable() })).mutation(async ({ input, ctx }) => progressToForm6({ ...input, recordedByUserId: ctx.user.id })),
   }),
 });
 

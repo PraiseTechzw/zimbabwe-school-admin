@@ -193,6 +193,129 @@ export const schoolDocuments = mysqlTable("school_documents", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
+export const registrationStatuses = mysqlEnum("registrationStatus", ["ACTIVE", "INACTIVE", "WITHDRAWN", "COMPLETED"]);
+export const applicationStatuses = mysqlEnum("applicationStatus", ["NOT_STARTED", "DRAFT", "SUBMITTED", "UNDER_REVIEW", "RESULTS_VERIFICATION", "ACCEPTED", "CONDITIONALLY_ACCEPTED", "REJECTED", "WITHDRAWN"]);
+export const verificationStatuses = mysqlEnum("verificationStatus", ["NOT_STARTED", "PENDING", "VERIFIED", "FAILED"]);
+const decisionStatusValues = ["PENDING", "SELECTED", "NOT_SELECTED", "ADMITTED", "NOT_ADMITTED"] as const;
+export const progressionTypes = mysqlEnum("progressionType", ["NORMAL_SECONDARY", "A_LEVEL_ADMISSION", "A_LEVEL_CONTINUATION"]);
+
+export const learners = mysqlTable("learners", {
+  id: int("id").autoincrement().primaryKey(),
+  studentId: varchar("studentId", { length: 60 }).notNull(),
+  admissionNumber: varchar("admissionNumber", { length: 60 }),
+  userId: int("userId").references(() => users.id),
+  firstName: varchar("firstName", { length: 80 }).notNull(),
+  middleName: varchar("middleName", { length: 80 }),
+  lastName: varchar("lastName", { length: 80 }).notNull(),
+  dateOfBirth: timestamp("dateOfBirth"),
+  gender: varchar("gender", { length: 30 }),
+  status: registrationStatuses.default("ACTIVE").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({ studentIdUnique: uniqueIndex("learner_student_id_unique").on(table.studentId), admissionNumberUnique: uniqueIndex("learner_admission_number_unique").on(table.admissionNumber) }));
+
+export const guardianContacts = mysqlTable("guardian_contacts", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").references(() => users.id),
+  firstName: varchar("firstName", { length: 80 }).notNull(),
+  lastName: varchar("lastName", { length: 80 }).notNull(),
+  relationship: varchar("relationship", { length: 60 }).notNull(),
+  phone: varchar("phone", { length: 40 }),
+  email: varchar("email", { length: 320 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const learnerGuardians = mysqlTable("learner_guardians", {
+  id: int("id").autoincrement().primaryKey(),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  guardianId: int("guardianId").notNull().references(() => guardianContacts.id),
+  isPrimary: boolean("isPrimary").default(false).notNull(),
+}, (table) => ({ learnerGuardianUnique: uniqueIndex("learner_guardian_unique").on(table.learnerId, table.guardianId) }));
+
+export const learnerAcademicHistory = mysqlTable("learner_academic_history", {
+  id: int("id").autoincrement().primaryKey(),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  academicYearId: int("academicYearId").notNull().references(() => academicYears.id),
+  termId: int("termId").notNull().references(() => academicTerms.id),
+  formId: int("formId").notNull().references(() => forms.id),
+  classId: int("classId").references(() => classes.id),
+  pathway: pathways.notNull(),
+  registrationStatus: registrationStatuses.default("ACTIVE").notNull(),
+  progressionType: progressionTypes,
+  previousHistoryId: int("previousHistoryId"),
+  recordedByUserId: int("recordedByUserId").notNull().references(() => users.id),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({ learnerYearTermUnique: uniqueIndex("learner_history_year_term_unique").on(table.learnerId, table.academicYearId, table.termId) }));
+
+export const oLevelResults = mysqlTable("o_level_results", {
+  id: int("id").autoincrement().primaryKey(),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  examinationYear: int("examinationYear").notNull(),
+  candidateNumber: varchar("candidateNumber", { length: 80 }).notNull(),
+  centreNumber: varchar("centreNumber", { length: 80 }),
+  candidateName: varchar("candidateName", { length: 180 }).notNull(),
+  verificationStatus: verificationStatuses.default("PENDING").notNull(),
+  verifiedByUserId: int("verifiedByUserId").references(() => users.id),
+  verifiedAt: timestamp("verifiedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({ learnerExamYearUnique: uniqueIndex("learner_o_level_exam_year_unique").on(table.learnerId, table.examinationYear) }));
+
+export const oLevelResultSubjects = mysqlTable("o_level_result_subjects", {
+  id: int("id").autoincrement().primaryKey(),
+  resultId: int("resultId").notNull().references(() => oLevelResults.id),
+  subjectId: int("subjectId").references(() => subjects.id),
+  subjectName: varchar("subjectName", { length: 140 }).notNull(),
+  grade: varchar("grade", { length: 10 }).notNull(),
+  points: int("points"),
+}, (table) => ({ resultSubjectUnique: uniqueIndex("o_level_result_subject_unique").on(table.resultId, table.subjectName) }));
+
+export const aLevelRequirements = mysqlTable("a_level_requirements", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 160 }).notNull(),
+  description: text("description"),
+  minimumPoints: int("minimumPoints"),
+  minimumPasses: int("minimumPasses"),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdByUserId: int("createdByUserId").notNull().references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const aLevelRequirementSubjects = mysqlTable("a_level_requirement_subjects", {
+  id: int("id").autoincrement().primaryKey(),
+  requirementId: int("requirementId").notNull().references(() => aLevelRequirements.id),
+  subjectId: int("subjectId").notNull().references(() => subjects.id),
+  minimumGrade: varchar("minimumGrade", { length: 10 }),
+  isRequired: boolean("isRequired").default(false).notNull(),
+}, (table) => ({ requirementSubjectUnique: uniqueIndex("a_level_requirement_subject_unique").on(table.requirementId, table.subjectId) }));
+
+export const aLevelApplications = mysqlTable("a_level_applications", {
+  id: int("id").autoincrement().primaryKey(),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  academicYearId: int("academicYearId").notNull().references(() => academicYears.id),
+  oLevelResultId: int("oLevelResultId").notNull().references(() => oLevelResults.id),
+  requirementId: int("requirementId").references(() => aLevelRequirements.id),
+  preferredPathway: pathways.default("A_LEVEL").notNull(),
+  applicationStatus: applicationStatuses.default("NOT_STARTED").notNull(),
+  verificationStatus: verificationStatuses.default("NOT_STARTED").notNull(),
+  selectionDecision: mysqlEnum("selectionDecision", decisionStatusValues).default("PENDING").notNull(),
+  admissionDecision: mysqlEnum("admissionDecision", decisionStatusValues).default("PENDING").notNull(),
+  submittedAt: timestamp("submittedAt"),
+  reviewedByUserId: int("reviewedByUserId").references(() => users.id),
+  reviewedAt: timestamp("reviewedAt"),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({ learnerYearApplicationUnique: uniqueIndex("a_level_application_learner_year_unique").on(table.learnerId, table.academicYearId) }));
+
+export const aLevelApplicationSubjects = mysqlTable("a_level_application_subjects", {
+  id: int("id").autoincrement().primaryKey(),
+  applicationId: int("applicationId").notNull().references(() => aLevelApplications.id),
+  subjectId: int("subjectId").notNull().references(() => subjects.id),
+  subjectName: varchar("subjectName", { length: 140 }).notNull(),
+}, (table) => ({ applicationSubjectUnique: uniqueIndex("a_level_application_subject_unique").on(table.applicationId, table.subjectId) }));
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type SchoolProfile = typeof schoolProfiles.$inferSelect;
@@ -209,3 +332,8 @@ export type Staff = typeof staff.$inferSelect;
 export type Permission = typeof permissions.$inferSelect;
 export type TeacherAssignment = typeof teacherAssignments.$inferSelect;
 export type SchoolDocument = typeof schoolDocuments.$inferSelect;
+export type Learner = typeof learners.$inferSelect;
+export type LearnerAcademicHistory = typeof learnerAcademicHistory.$inferSelect;
+export type OLevelResult = typeof oLevelResults.$inferSelect;
+export type ALevelRequirement = typeof aLevelRequirements.$inferSelect;
+export type ALevelApplication = typeof aLevelApplications.$inferSelect;
