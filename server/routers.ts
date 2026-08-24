@@ -11,6 +11,7 @@ import { createLearner, explicitlyEnrolForm5, getAcademicData, getPortalAcademic
 import { approveSchoolCharge, calculateInvoiceTotals, createApprovedCharge, createFeeStructure, createInvoice, getFinanceData, getFinancialReports, getLearnerStatement, recordBeam, recordPayment, recordScholarship, reconcilePayment, savePaynowSettings } from "./finance";
 import { addDisciplineAction, assertStage5Permission, createDisciplineIncident, createExeatRequest, createSafeguardingReferral, createWelfareCase, getStage5Dashboard, getStage5SensitiveData, recordAttendance, stage5Permissions, upsertMedicalProfile } from "./welfare";
 import { createSchoolEvent, createTimetableEntry, getTimetableAdminData, getTimetableView } from "./timetable";
+import { portalSnapshot } from "./portal";
 import { academicTerms, academicYears, classes, departments, forms, houses, rooms, staff, subjects, teacherAssignments } from "../drizzle/schema";
 
 const schoolProfileInput = z.object({
@@ -230,6 +231,9 @@ export const appRouter = router({
     view: protectedProcedure.input(z.object({ view: z.enum(["HEADTEACHER", "TEACHER", "LEARNER", "GUARDIAN"]) })).query(async ({ input, ctx }) => getTimetableView(ctx.user.id, input.view, ctx.user.role === "admin")),
     createEntry: adminProcedure.input(timetableEntryInput).mutation(async ({ input, ctx }) => createTimetableEntry({ ...input, createdByUserId: ctx.user.id })),
     createEvent: adminProcedure.input(schoolEventInput).mutation(async ({ input, ctx }) => createSchoolEvent({ ...input, createdByUserId: ctx.user.id })),
+  }),
+  portal: router({
+    snapshot: protectedProcedure.input(z.object({ audience: z.enum(["LEARNER", "GUARDIAN"]), learnerId: z.number().int().positive().optional() })).query(async ({ input, ctx }) => portalSnapshot(ctx.user.id, input.audience, input.learnerId)),
   }),
 });
 

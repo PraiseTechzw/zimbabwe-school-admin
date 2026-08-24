@@ -10,6 +10,7 @@ import AcademicHistory from "./pages/AcademicHistory";
 import Welfare from "./pages/Welfare";
 import Finance from "./pages/Finance";
 import Timetable from "./pages/Timetable";
+import Portal from "./pages/Portal";
 
 function Router() {
   return (
@@ -23,6 +24,7 @@ function Router() {
       <Route path="/welfare"><DashboardLayout><Welfare /></DashboardLayout></Route>
       <Route path="/finance"><DashboardLayout><Finance /></DashboardLayout></Route>
       <Route path="/timetable"><DashboardLayout><Timetable /></DashboardLayout></Route>
+      <Route path="/portal"><DashboardLayout><Portal /></DashboardLayout></Route>
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

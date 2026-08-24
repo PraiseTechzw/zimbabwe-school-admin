@@ -209,6 +209,8 @@ export const reconciliationStatuses = mysqlEnum("reconciliationStatus", ["UNMATC
 export const timetableEntryTypes = mysqlEnum("timetableEntryType", ["LESSON", "ASSEMBLY", "EXAMINATION", "EVENT"]);
 export const eventTypes = mysqlEnum("eventType", ["ASSEMBLY", "EXAMINATION", "SCHOOL_EVENT", "SPORTS_EVENT", "CONSULTATION_DAY", "SPEECH_DAY"]);
 export const eventVisibility = mysqlEnum("eventVisibility", ["HEADTEACHER", "STAFF", "LEARNERS_GUARDIANS", "ALL"]);
+export const portalAssignmentStatuses = mysqlEnum("portalAssignmentStatus", ["ASSIGNED", "SUBMITTED", "GRADED", "OVERDUE"]);
+export const noticeAudiences = mysqlEnum("noticeAudience", ["ALL", "LEARNERS", "GUARDIANS", "STAFF"]);
 export const paymentStatuses = mysqlEnum("paymentStatus", ["PENDING", "CONFIRMED", "REVERSED"]);
 export const attendanceModes = mysqlEnum("attendanceMode", ["DAILY", "PERIOD", "BOARDING_ROLL_CALL"]);
 export const attendanceStatuses = mysqlEnum("attendanceStatus", ["PRESENT", "ABSENT", "LATE", "EXCUSED"]);
@@ -225,6 +227,7 @@ export const learners = mysqlTable("learners", {
   studentId: varchar("studentId", { length: 60 }).notNull(),
   admissionNumber: varchar("admissionNumber", { length: 60 }),
   userId: int("userId").references(() => users.id),
+  houseId: int("houseId").references(() => houses.id),
   firstName: varchar("firstName", { length: 80 }).notNull(),
   middleName: varchar("middleName", { length: 80 }),
   lastName: varchar("lastName", { length: 80 }).notNull(),
@@ -555,6 +558,79 @@ export const schoolEvents = mysqlTable("school_events", {
 
 export type TimetableEntry = typeof timetableEntries.$inferSelect;
 export type SchoolEvent = typeof schoolEvents.$inferSelect;
+
+export const learnerResults = mysqlTable("learner_results", {
+  id: int("id").autoincrement().primaryKey(),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  academicYearId: int("academicYearId").notNull().references(() => academicYears.id),
+  termId: int("termId").notNull().references(() => academicTerms.id),
+  subjectId: int("subjectId").references(() => subjects.id),
+  subjectName: varchar("subjectName", { length: 140 }).notNull(),
+  marks: int("marks"),
+  grade: varchar("grade", { length: 20 }),
+  remarks: varchar("remarks", { length: 500 }),
+  publishedAt: timestamp("publishedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export const learnerReportCards = mysqlTable("learner_report_cards", {
+  id: int("id").autoincrement().primaryKey(),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  academicYearId: int("academicYearId").notNull().references(() => academicYears.id),
+  termId: int("termId").notNull().references(() => academicTerms.id),
+  status: varchar("status", { length: 30 }).default("PUBLISHED").notNull(),
+  summary: text("summary"),
+  documentUrl: varchar("documentUrl", { length: 800 }),
+  publishedAt: timestamp("publishedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export const learnerAssignments = mysqlTable("learner_assignments", {
+  id: int("id").autoincrement().primaryKey(),
+  classId: int("classId").notNull().references(() => classes.id),
+  subjectId: int("subjectId").references(() => subjects.id),
+  title: varchar("title", { length: 180 }).notNull(),
+  description: text("description"),
+  dueAt: timestamp("dueAt"),
+  status: portalAssignmentStatuses.default("ASSIGNED").notNull(),
+  documentUrl: varchar("documentUrl", { length: 800 }),
+  createdByUserId: int("createdByUserId").notNull().references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export const sbpRecords = mysqlTable("sbp_records", {
+  id: int("id").autoincrement().primaryKey(),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  academicYearId: int("academicYearId").notNull().references(() => academicYears.id),
+  title: varchar("title", { length: 180 }).notNull(),
+  status: varchar("status", { length: 40 }).default("RECORDED").notNull(),
+  score: int("score"),
+  remarks: text("remarks"),
+  publishedAt: timestamp("publishedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export const schoolNotices = mysqlTable("school_notices", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 180 }).notNull(),
+  body: text("body").notNull(),
+  audience: noticeAudiences.default("ALL").notNull(),
+  publishedAt: timestamp("publishedAt"),
+  expiresAt: timestamp("expiresAt"),
+  createdByUserId: int("createdByUserId").notNull().references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export const learnerDocuments = mysqlTable("learner_documents", {
+  id: int("id").autoincrement().primaryKey(),
+  learnerId: int("learnerId").notNull().references(() => learners.id),
+  title: varchar("title", { length: 180 }).notNull(),
+  category: varchar("category", { length: 80 }).notNull(),
+  documentUrl: varchar("documentUrl", { length: 800 }).notNull(),
+  publishedAt: timestamp("publishedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type LearnerResult = typeof learnerResults.$inferSelect;
+export type LearnerReportCard = typeof learnerReportCards.$inferSelect;
+export type LearnerAssignment = typeof learnerAssignments.$inferSelect;
+export type SbpRecord = typeof sbpRecords.$inferSelect;
+export type SchoolNotice = typeof schoolNotices.$inferSelect;
+export type LearnerDocument = typeof learnerDocuments.$inferSelect;
 
 export const attendanceSessions = mysqlTable("attendance_sessions", {
   id: int("id").autoincrement().primaryKey(),
