@@ -29,6 +29,18 @@ export function validateNormalProgression(previousFormNumber: number | undefined
   return previousFormNumber >= 1 && previousFormNumber < 4 && targetFormNumber === previousFormNumber + 1;
 }
 
+export function validateALevelAdmissionReview(input: { applicationStatus: string; verificationStatus: string; selectionDecision: string }) {
+  if (input.applicationStatus === "ACCEPTED" || input.applicationStatus === "CONDITIONALLY_ACCEPTED") {
+    if (input.verificationStatus !== "VERIFIED") throw new TRPCError({ code: "BAD_REQUEST", message: "Verify ZIMSEC results before accepting an A-Level application." });
+    if (input.selectionDecision !== "SELECTED") throw new TRPCError({ code: "BAD_REQUEST", message: "Select the learner before accepting an A-Level application." });
+  }
+  return true;
+}
+
+export function canExplicitlyEnrolForm5(input: { applicationStatus: string; admissionDecision: string }) {
+  return input.applicationStatus === "ACCEPTED" && input.admissionDecision === "ADMITTED";
+}
+
 type HistoryInput = {
   learnerId: number;
   academicYearId: number;
@@ -135,10 +147,7 @@ export async function updateALevelApplication(input: { applicationId: number; ap
   const current = await db.select().from(aLevelApplications).where(eq(aLevelApplications.id, input.applicationId)).limit(1);
   if (!current[0]) throw new TRPCError({ code: "NOT_FOUND", message: "A-Level application not found." });
   const nextStatus = input.applicationStatus ?? current[0].applicationStatus;
-  if (nextStatus === "ACCEPTED" || nextStatus === "CONDITIONALLY_ACCEPTED") {
-    if (input.verificationStatus !== "VERIFIED" && current[0].verificationStatus !== "VERIFIED") throw new TRPCError({ code: "BAD_REQUEST", message: "Verify ZIMSEC results before accepting an A-Level application." });
-    if (input.selectionDecision !== "SELECTED" && current[0].selectionDecision !== "SELECTED") throw new TRPCError({ code: "BAD_REQUEST", message: "Select the learner before accepting an A-Level application." });
-  }
+  validateALevelAdmissionReview({ applicationStatus: nextStatus, verificationStatus: input.verificationStatus ?? current[0].verificationStatus, selectionDecision: input.selectionDecision ?? current[0].selectionDecision });
   await db.update(aLevelApplications).set({ applicationStatus: nextStatus, verificationStatus: input.verificationStatus ?? current[0].verificationStatus, selectionDecision: input.selectionDecision ?? current[0].selectionDecision, admissionDecision: input.admissionDecision ?? current[0].admissionDecision, reviewedByUserId: input.reviewedByUserId, reviewedAt: new Date(), notes: input.notes ?? current[0].notes }).where(eq(aLevelApplications.id, input.applicationId));
   return (await db.select().from(aLevelApplications).where(eq(aLevelApplications.id, input.applicationId)).limit(1))[0];
 }
@@ -148,7 +157,7 @@ export async function explicitlyEnrolForm5(input: { applicationId: number; acade
   if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database is not available." });
   const rows = await db.select().from(aLevelApplications).where(eq(aLevelApplications.id, input.applicationId)).limit(1);
   const application = rows[0];
-  if (!application || application.applicationStatus !== "ACCEPTED" || application.admissionDecision !== "ADMITTED") throw new TRPCError({ code: "BAD_REQUEST", message: "Only an accepted application with an explicit admission decision can create Form 5 enrolment." });
+  if (!application || !canExplicitlyEnrolForm5(application)) throw new TRPCError({ code: "BAD_REQUEST", message: "Only an accepted application with an explicit admission decision can create Form 5 enrolment." });
   const form5 = await db.select().from(forms).where(and(eq(forms.formNumber, 5), eq(forms.pathway, "A_LEVEL"))).limit(1);
   if (!form5[0]) throw new TRPCError({ code: "BAD_REQUEST", message: "Configure the A-Level Form 5 record before enrolment." });
   const previous = await db.select().from(learnerAcademicHistory).where(eq(learnerAcademicHistory.learnerId, application.learnerId)).orderBy(desc(learnerAcademicHistory.createdAt)).limit(1);
