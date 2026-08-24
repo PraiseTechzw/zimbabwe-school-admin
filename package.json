@@ -1,6 +1,7 @@
 {
   "name": "zimbabwe-school-admin",
   "version": "1.0.0",
+  "description": "Role-aware school administration foundation for Zimbabwean secondary schools.",
   "type": "module",
   "license": "MIT",
   "scripts": {

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="760" viewBox="0 0 1440 760" role="img" aria-labelledby="title desc">
+  <title id="title">Zimbabwe School Admin foundation overview</title>
+  <desc id="desc">A product preview showing readiness metrics and school foundation modules.</desc>
+  <defs><linearGradient id="navy" x1="0" x2="1"><stop offset="0" stop-color="#0f3049"/><stop offset="1" stop-color="#173f5d"/></linearGradient><filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0f2c46" flood-opacity=".09"/></filter></defs>
+  <rect width="1440" height="760" fill="#f6f8fb"/>
+  <rect width="1440" height="230" fill="url(#navy)"/>
+  <text x="72" y="56" font-family="Arial, sans-serif" font-size="15" font-weight="700" letter-spacing="3" fill="#e4c477">ZIMBABWE SCHOOL ADMIN</text>
+  <text x="72" y="117" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="white">School foundation overview</text>
+  <text x="72" y="160" font-family="Arial, sans-serif" font-size="17" fill="#c9dbe8">A single view of the records every later operation depends on.</text>
+  <rect x="1120" y="76" width="220" height="82" rx="18" fill="#ffffff" fill-opacity=".10" stroke="#ffffff" stroke-opacity=".16"/>
+  <text x="1145" y="108" font-family="Arial, sans-serif" font-size="12" fill="#c9dbe8">CURRENT SCHOOL YEAR</text><text x="1145" y="140" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="white">2026</text>
+  <g filter="url(#shadow)">
+    <rect x="72" y="272" width="300" height="150" rx="18" fill="white" stroke="#dbe3ea"/><rect x="395" y="272" width="300" height="150" rx="18" fill="white" stroke="#dbe3ea"/><rect x="718" y="272" width="300" height="150" rx="18" fill="white" stroke="#dbe3ea"/><rect x="1041" y="272" width="327" height="150" rx="18" fill="white" stroke="#dbe3ea"/>
+  </g>
+  <g font-family="Arial, sans-serif"><text x="101" y="312" font-size="14" fill="#718193">ACADEMIC YEAR</text><text x="101" y="364" font-size="34" font-weight="700" fill="#15293b">2026</text><text x="101" y="394" font-size="13" fill="#718193">Current school year</text>
+  <text x="424" y="312" font-size="14" fill="#718193">FORMS CONFIGURED</text><text x="424" y="364" font-size="34" font-weight="700" fill="#15293b">6</text><text x="424" y="394" font-size="13" fill="#718193">Forms 1–6 pathways</text>
+  <text x="747" y="312" font-size="14" fill="#718193">STAFF ROLES</text><text x="747" y="364" font-size="34" font-weight="700" fill="#15293b">4</text><text x="747" y="394" font-size="13" fill="#718193">Configurable access roles</text>
+  <text x="1070" y="312" font-size="14" fill="#718193">STAFF RECORDS</text><text x="1070" y="364" font-size="34" font-weight="700" fill="#15293b">18</text><text x="1070" y="394" font-size="13" fill="#718193">Ready for assignments</text></g>
+  <rect x="72" y="458" width="1296" height="64" rx="16" fill="white" stroke="#dbe3ea"/><text x="104" y="498" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#0f3049">Foundation modules</text><text x="350" y="498" font-family="Arial, sans-serif" font-size="15" fill="#617285">Academic structure</text><text x="585" y="498" font-family="Arial, sans-serif" font-size="15" fill="#617285">People &amp; access</text><text x="810" y="498" font-family="Arial, sans-serif" font-size="15" fill="#617285">Operations</text>
+  <g filter="url(#shadow)"><rect x="72" y="554" width="413" height="130" rx="18" fill="white" stroke="#dbe3ea"/><rect x="514" y="554" width="413" height="130" rx="18" fill="white" stroke="#dbe3ea"/><rect x="956" y="554" width="412" height="130" rx="18" fill="white" stroke="#dbe3ea"/></g>
+  <g font-family="Arial, sans-serif"><text x="103" y="596" font-size="13" font-weight="700" letter-spacing="1.5" fill="#0f5b85">ACADEMIC STRUCTURE</text><text x="103" y="628" font-size="20" font-weight="700" fill="#15293b">Years, terms, forms &amp; classes</text><text x="103" y="655" font-size="13" fill="#718193">Three-term lifecycle · O-Level / A-Level</text>
+  <text x="545" y="596" font-size="13" font-weight="700" letter-spacing="1.5" fill="#0f5b85">PEOPLE &amp; ACCESS</text><text x="545" y="628" font-size="20" font-weight="700" fill="#15293b">Roles, permissions &amp; staff</text><text x="545" y="655" font-size="13" fill="#718193">Runtime capability-aware controls</text>
+  <text x="987" y="596" font-size="13" font-weight="700" letter-spacing="1.5" fill="#0f5b85">OPERATIONS</text><text x="987" y="628" font-size="20" font-weight="700" fill="#15293b">Rooms, houses &amp; assignments</text><text x="987" y="655" font-size="13" fill="#718193">Ready for future daily workflows</text></g>
+</svg>

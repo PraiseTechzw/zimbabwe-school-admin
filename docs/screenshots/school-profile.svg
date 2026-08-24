@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="860" viewBox="0 0 1440 860" role="img" aria-labelledby="title desc">
+  <title id="title">Zimbabwe School Admin school profile screen</title>
+  <desc id="desc">A navy and gold administrative dashboard showing official school details and brand presence.</desc>
+  <defs>
+    <linearGradient id="hero" x1="0" x2="1"><stop offset="0" stop-color="#0f3049"/><stop offset="1" stop-color="#173f5d"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#0f2c46" flood-opacity=".10"/></filter>
+  </defs>
+  <rect width="1440" height="860" fill="#f6f8fb"/>
+  <rect width="1440" height="255" fill="url(#hero)"/>
+  <circle cx="1270" cy="40" r="220" fill="#d6a94b" opacity=".10"/>
+  <text x="72" y="62" font-family="Arial, sans-serif" font-size="16" font-weight="700" letter-spacing="3" fill="#e4c477">STAGE 1 · SCHOOL FOUNDATION</text>
+  <text x="72" y="122" font-family="Arial, sans-serif" font-size="40" font-weight="700" fill="white">A considered foundation for</text>
+  <text x="72" y="169" font-family="Arial, sans-serif" font-size="40" font-weight="700" fill="white">confident school administration.</text>
+  <text x="72" y="209" font-family="Arial, sans-serif" font-size="17" fill="#c9dbe8">Set up identity, academic structure, people, spaces and permissions.</text>
+  <rect x="1106" y="105" width="255" height="80" rx="18" fill="#ffffff" fill-opacity=".10" stroke="#ffffff" stroke-opacity=".16"/>
+  <text x="1130" y="136" font-family="Arial, sans-serif" font-size="13" fill="#c9dbe8">CONFIGURATION READINESS</text>
+  <text x="1130" y="166" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="white">5/5 foundations ready</text>
+  <rect x="72" y="286" width="1296" height="64" rx="16" fill="white" stroke="#dbe3ea"/>
+  <text x="101" y="326" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#0f3049">School profile</text>
+  <text x="267" y="326" font-family="Arial, sans-serif" font-size="16" fill="#617285">Academic structure</text>
+  <text x="478" y="326" font-family="Arial, sans-serif" font-size="16" fill="#617285">People &amp; access</text>
+  <text x="674" y="326" font-family="Arial, sans-serif" font-size="16" fill="#617285">Operations</text>
+  <rect x="72" y="382" width="775" height="415" rx="18" fill="white" stroke="#dbe3ea" filter="url(#shadow)"/>
+  <text x="104" y="425" font-family="Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="2" fill="#0f5b85">IDENTITY &amp; COMPLIANCE</text>
+  <text x="104" y="462" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#15293b">Official school details</text>
+  <text x="104" y="490" font-family="Arial, sans-serif" font-size="15" fill="#718193">Secondary-school registration and contact information.</text>
+  <g font-family="Arial, sans-serif" font-size="13" fill="#596b7c">
+    <text x="104" y="538">SCHOOL NAME</text><text x="486" y="538">MoPSE REGISTRATION NUMBER</text>
+    <text x="104" y="622">SCHOOL MOTTO</text><text x="104" y="705">ADDRESS LINE 1</text>
+  </g>
+  <g fill="#f8fafc" stroke="#d8e1e8">
+    <rect x="104" y="550" width="350" height="48" rx="10"/><rect x="486" y="550" width="318" height="48" rx="10"/>
+    <rect x="104" y="634" width="700" height="48" rx="10"/><rect x="104" y="717" width="700" height="48" rx="10"/>
+  </g>
+  <g font-family="Arial, sans-serif" font-size="15" fill="#1e3448">
+    <text x="122" y="580">Mufakose High School</text><text x="504" y="580">MPS-2026-0142</text>
+    <text x="122" y="664">Knowledge, character, service</text><text x="122" y="747">12 School Road, Mufakose</text>
+  </g>
+  <rect x="879" y="382" width="489" height="415" rx="18" fill="white" stroke="#dbe3ea" filter="url(#shadow)"/>
+  <rect x="879" y="382" width="489" height="170" rx="18" fill="#eef3f6"/>
+  <text x="913" y="425" font-family="Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="2" fill="#718193">BRAND PRESENCE</text>
+  <text x="913" y="462" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#15293b">School logo &amp; colours</text>
+  <rect x="1055" y="486" width="120" height="90" rx="16" fill="white" stroke="#d1dce4"/>
+  <rect x="1083" y="506" width="64" height="50" rx="12" fill="#0f3049"/><path d="M1098 537h34M1105 524h20" stroke="#d6a94b" stroke-width="5" stroke-linecap="round"/>
+  <text x="913" y="625" font-family="Arial, sans-serif" font-size="13" fill="#596b7c">PRIMARY COLOUR</text><text x="1177" y="625" font-family="Arial, sans-serif" font-size="13" fill="#596b7c">ACCENT</text>
+  <rect x="913" y="640" width="210" height="45" rx="10" fill="#f8fafc" stroke="#d8e1e8"/><rect x="1177" y="640" width="155" height="45" rx="10" fill="#f8fafc" stroke="#d8e1e8"/>
+  <rect x="928" y="653" width="20" height="20" rx="5" fill="#123b5d"/><text x="958" y="669" font-family="Arial, sans-serif" font-size="14" fill="#1e3448">#123B5D</text>
+  <rect x="1192" y="653" width="20" height="20" rx="5" fill="#c99a3e"/><text x="1222" y="669" font-family="Arial, sans-serif" font-size="14" fill="#1e3448">#C99A3E</text>
+  <rect x="913" y="722" width="419" height="48" rx="12" fill="#ecfdf5" stroke="#b7ead2"/><text x="937" y="751" font-family="Arial, sans-serif" font-size="13" fill="#087443">Logo files are stored securely outside the database.</text>
+</svg>
