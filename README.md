@@ -129,6 +129,7 @@ The foundation workflow is deliberately capability-aware: the server checks the 
 | Stage 6 | School finance, USD/ZiG accounts, invoices, payments, assistance, reconciliation, reports, and Paynow configuration | Implemented in [`docs/STAGE6_SCHOOL_FINANCE.md`](docs/STAGE6_SCHOOL_FINANCE.md) |
 | Stage 7 | Communication, dashboards, exports, and operational workflows | Planned |
 | Stage 8 | School timetable, teacher workload, room and laboratory allocation, clash detection, and daily operations | Implemented in [`docs/STAGE8_TIMETABLE_OPERATIONS.md`](docs/STAGE8_TIMETABLE_OPERATIONS.md) |
+| Stage 11 | Reporting, audit, security, Student ID integrity, system health, notifications, and production readiness | Implemented in [`docs/STAGE11_PRODUCTION_READINESS.md`](docs/STAGE11_PRODUCTION_READINESS.md) |
 
 ## Contributing
 
