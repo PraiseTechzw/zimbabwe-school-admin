@@ -42,6 +42,7 @@ const menuItems = [
   { icon: Banknote, label: "School finance", path: "/finance" },
   { icon: CalendarDays, label: "Timetable & daily operations", path: "/timetable" },
   { icon: GraduationCap, label: "Learner & guardian portal", path: "/portal" },
+  { icon: ShieldCheck, label: "Reports, audit & system health", path: "/production-readiness" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";

@@ -211,6 +211,10 @@ export const eventTypes = mysqlEnum("eventType", ["ASSEMBLY", "EXAMINATION", "SC
 export const eventVisibility = mysqlEnum("eventVisibility", ["HEADTEACHER", "STAFF", "LEARNERS_GUARDIANS", "ALL"]);
 export const portalAssignmentStatuses = mysqlEnum("portalAssignmentStatus", ["ASSIGNED", "SUBMITTED", "GRADED", "OVERDUE"]);
 export const noticeAudiences = mysqlEnum("noticeAudience", ["ALL", "LEARNERS", "GUARDIANS", "STAFF"]);
+export const auditActions = mysqlEnum("auditAction", ["CREATE", "UPDATE", "DELETE", "APPROVE", "LOCK", "UNLOCK", "LOGIN", "LOGOUT", "EXPORT", "REVERSE", "TRANSFER", "WITHDRAW"]);
+export const notificationDeliveryStatuses = mysqlEnum("notificationDeliveryStatus", ["PENDING", "SENT", "DELIVERED", "FAILED"]);
+export const healthStatuses = mysqlEnum("healthStatus", ["HEALTHY", "DEGRADED", "DOWN", "NOT_CONFIGURED"]);
+export const integrityIssueTypes = mysqlEnum("integrityIssueType", ["DUPLICATE_STUDENT_ID", "MISSING_STUDENT_ID", "INVALID_STUDENT_ID", "ORPHANED_ACADEMIC_RECORD", "DUPLICATE_ACTIVE_LEARNER"]);
 export const paymentStatuses = mysqlEnum("paymentStatus", ["PENDING", "CONFIRMED", "REVERSED"]);
 export const attendanceModes = mysqlEnum("attendanceMode", ["DAILY", "PERIOD", "BOARDING_ROLL_CALL"]);
 export const attendanceStatuses = mysqlEnum("attendanceStatus", ["PRESENT", "ABSENT", "LATE", "EXCUSED"]);
@@ -631,6 +635,55 @@ export type LearnerAssignment = typeof learnerAssignments.$inferSelect;
 export type SbpRecord = typeof sbpRecords.$inferSelect;
 export type SchoolNotice = typeof schoolNotices.$inferSelect;
 export type LearnerDocument = typeof learnerDocuments.$inferSelect;
+
+export const auditLogs = mysqlTable("audit_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").references(() => users.id),
+  role: varchar("role", { length: 60 }),
+  action: auditActions.notNull(),
+  entity: varchar("entity", { length: 100 }).notNull(),
+  entityId: varchar("entityId", { length: 100 }),
+  previousValue: text("previousValue"),
+  newValue: text("newValue"),
+  reason: varchar("reason", { length: 500 }),
+  ipAddress: varchar("ipAddress", { length: 80 }),
+  deviceInfo: varchar("deviceInfo", { length: 500 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export const notificationAudit = mysqlTable("notification_audit", {
+  id: int("id").autoincrement().primaryKey(),
+  learnerId: int("learnerId").references(() => learners.id),
+  recipientUserId: int("recipientUserId").references(() => users.id),
+  notificationType: varchar("notificationType", { length: 100 }).notNull(),
+  provider: varchar("provider", { length: 100 }),
+  status: notificationDeliveryStatuses.default("PENDING").notNull(),
+  providerReference: varchar("providerReference", { length: 180 }),
+  failureReason: text("failureReason"),
+  sentAt: timestamp("sentAt"),
+  deliveredAt: timestamp("deliveredAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export const systemHealthChecks = mysqlTable("system_health_checks", {
+  id: int("id").autoincrement().primaryKey(),
+  service: varchar("service", { length: 100 }).notNull(),
+  status: healthStatuses.notNull(),
+  detail: varchar("detail", { length: 500 }),
+  checkedAt: timestamp("checkedAt").defaultNow().notNull(),
+});
+export const studentIdIntegrityIssues = mysqlTable("student_id_integrity_issues", {
+  id: int("id").autoincrement().primaryKey(),
+  learnerId: int("learnerId").references(() => learners.id),
+  studentId: varchar("studentId", { length: 60 }),
+  issueType: integrityIssueTypes.notNull(),
+  detail: varchar("detail", { length: 500 }).notNull(),
+  resolvedAt: timestamp("resolvedAt"),
+  resolvedByUserId: int("resolvedByUserId").references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type AuditLog = typeof auditLogs.$inferSelect;
+export type NotificationAudit = typeof notificationAudit.$inferSelect;
+export type SystemHealthCheck = typeof systemHealthChecks.$inferSelect;
+export type StudentIdIntegrityIssue = typeof studentIdIntegrityIssues.$inferSelect;
 
 export const attendanceSessions = mysqlTable("attendance_sessions", {
   id: int("id").autoincrement().primaryKey(),

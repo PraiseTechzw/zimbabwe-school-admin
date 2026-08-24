@@ -11,6 +11,7 @@ import Welfare from "./pages/Welfare";
 import Finance from "./pages/Finance";
 import Timetable from "./pages/Timetable";
 import Portal from "./pages/Portal";
+import ProductionReadiness from "./pages/ProductionReadiness";
 
 function Router() {
   return (
@@ -25,6 +26,7 @@ function Router() {
       <Route path="/finance"><DashboardLayout><Finance /></DashboardLayout></Route>
       <Route path="/timetable"><DashboardLayout><Timetable /></DashboardLayout></Route>
       <Route path="/portal"><DashboardLayout><Portal /></DashboardLayout></Route>
+      <Route path="/production-readiness"><DashboardLayout><ProductionReadiness /></DashboardLayout></Route>
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
